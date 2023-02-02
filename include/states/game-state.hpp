@@ -14,19 +14,13 @@
 #include "states/pause-state.hpp"
 #include "definitions.hpp"
 #include "box2d/box2d.h"
-#include "box2d/b2_rope.h"
 
 // Pixels per meter. Box2D uses metric units, so we need to define a conversion
 #define PPM 30.0F
 // SFML uses degrees for angles while Box2D uses radians
 #define DEG_PER_RAD 57.2957795F
 
-// class Body
-// {
-// public:
-//     b2BodyDef b2_body;
-//     sf::RectangleShape rect;
-// };
+#define PLAYER_STEP 5
 
 // A structure with all we need to render a box
 struct Box
@@ -37,17 +31,18 @@ struct Box
 	b2Body *body;
 };
 
+struct RayCastClosestCallback : public b2RayCastCallback {
+  b2Fixture *m_closestFixture = nullptr;
+  b2Vec2 m_closestPoint;
+  float m_closestFraction = 1.0f;
+
+  float ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float fraction);
+};
+
 class GameState : public pte::GenericState
 {
 private:
     sf::Sprite pause_button;
-
-    // ball
-    float pi = 3.14159f;
-    float ballRadius = 10.f;
-    float ballSpeed = 400.f;
-    float ballAngle = 0.f;
-    sf::CircleShape ball;
 
     // b2d
     b2World *world;
@@ -55,8 +50,13 @@ private:
     // simulation
     std::vector<Box> boxes;
     Box player;
-    Box p1, p2;
-    b2DistanceJointDef jointDef;
+    Box hook_end;
+    bool hook_end_attached;
+    sf::RectangleShape player_aim;
+    float aim_angle;
+
+    b2DistanceJointDef hook_joint_def;
+    b2DistanceJoint* hook_joint;
     
 
 public:
@@ -71,6 +71,14 @@ public:
     Box createBox(float x, float y, float width, float height, float density, float friction, sf::Color color);
     Box createGround(float x, float y, float width, float height, sf::Color color);
     void render(sf::RenderWindow &w, std::vector<Box> &boxes);
+
+    // boxes
+    void init_boxes();
+
+    // player
+    void move_player_right();
+    void move_player_left();
+    void jump();
 
 };
 

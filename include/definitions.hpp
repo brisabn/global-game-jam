@@ -8,8 +8,8 @@
 #ifndef DEFINITIONS_HPP
 #define DEFINITIONS_HPP
 
-// window
-#define SCREEN_WIDTH 800
+// window (WSVGA)
+#define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 600
 
 // splash screen

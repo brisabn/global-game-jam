@@ -11,34 +11,36 @@ void GameState::init()
     // b2d world, gravity: 9 m/s^2
     world = new b2World(b2Vec2(0, -9));
 
-    // b2d ground
-    boxes.push_back(createGround(200, 50, 300, 25, sf::Color::White));
+    // // b2d ground
+    // boxes.push_back(createGround(200, 50, 300, 25, sf::Color::White));
 
     // player
-    player = createBox(150, 100, 24, 24, 1.f, 0.7f, sf::Color::Magenta);
+    player = createBox(150, 130, 34, 44, 35.f, 0.7f, sf::Color::Magenta);
+    // player.body->GetFixtureList()->SetFriction(5);
+    hook_end_attached = false;
 
-    // p1
-    p1 = createGround(150, 400, 10, 10, sf::Color::White);
-    p2 = createBox(100, 300, 10, 10, 1.f, 0.7f, sf::Color::Cyan);
+    // player's aim indicator
+    player_aim.setSize(sf::Vector2f(10, 30));
+    player_aim.setOrigin(5, 25);
+    player_aim.setFillColor(sf::Color::Red);
+    aim_angle = 0;
 
-    // joint p1 p2
-    jointDef.Initialize(p1.body, p2.body, p1.body->GetWorldCenter(), p2.body->GetWorldCenter());
-    jointDef.collideConnected = true;
-    world->CreateJoint(&jointDef);
-    // jointDef.SetLength(2.f);
+    // // p1
+    // p1 = createGround(150, 400, 10, 10, sf::Color::White);
+    // p2 = createBox(100, 300, 10, 10, 1.f, 0.7f, sf::Color::Cyan);
 
-    // // Generate a lot of boxes
-    // for (int i = 0; i < 30; i++)
-    // {
-    // 	// Starting positions are randomly generated: x between 50 and 550, y between 70 and 550
-    // 	auto &&box = createBox(50 + (std::rand() % (550 - 50 + 1)), 70 + (std::rand() % (550 - 70 + 1)), 24, 24, 1.f, 0.7f, sf::Color::White);
-    // 	boxes.push_back(box);
-    // }
+    // // joint p1 p2
+    // jointDef.Initialize(p1.body, p2.body, p1.body->GetWorldCenter(), p2.body->GetWorldCenter());
+    // jointDef.collideConnected = true;
+    // jointDef.stiffness = 0.f;
+    // jointDef.damping = 0.f;
 
-    do
-    {
-        ballAngle = (std::rand() % 360) * 2 * pi / 360;
-    } while (std::abs(std::cos(ballAngle)) < 0.7f);
+    // joint = (b2DistanceJoint *)world->CreateJoint(&jointDef);
+    // joint->SetMinLength(0.f);
+    // joint->SetMaxLength(10.f);
+
+    // all boxes in this level
+    init_boxes();
 }
 
 void GameState::handle_input()
@@ -61,37 +63,143 @@ void GameState::handle_input()
         if (sf::Event::MouseButtonPressed == event.type)
         {
             int mouse_x = sf::Mouse::getPosition(*window).x;
-            int mouse_y = sf::Mouse::getPosition(*window).y;
+            int mouse_y = SCREEN_HEIGHT - sf::Mouse::getPosition(*window).y;
 
-            if (event.mouseButton.button == sf::Mouse::Left)
+            std::cout << "mouse: " << mouse_x << " " << mouse_y << std::endl;
+        }
+
+        if (hook_end_attached)
+        {
+            if (event.type == sf::Event::MouseWheelMoved)
             {
-                // create_box(*world, mouse_x, mouse_y);
-                auto &&box = createBox(mouse_x, mouse_y, 24, 24, 1.f, 0.7f, sf::Color::White);
-                boxes.push_back(box);
+                hook_joint->SetMaxLength(hook_joint->GetMaxLength() - (0.3f * event.mouseWheel.delta));
             }
         }
     }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    if (world->GetJointCount())
     {
-        player.body->ApplyForceToCenter(b2Vec2(10, 1), false);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        {
+            hook_joint->SetMaxLength(hook_joint->GetMaxLength() - 0.1f);
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+        {
+            hook_joint->SetMaxLength(hook_joint->GetMaxLength() + 0.1f);
+        }
+        // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+        // {
+        //     p2.body->ApplyForceToCenter(b2Vec2(10, 0), false);
+        // }
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        player.body->ApplyForceToCenter(b2Vec2(-10, 1), false);
+        move_player_right();
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        std::cout << jointDef.length << std::endl;
-        std::cout << jointDef.maxLength << std::endl;
-        jointDef.maxLength = jointDef.length - 1.f;
+        move_player_left();
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        jump();
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+    {
+        system("clear");
+        std::cout << sf::Mouse::getPosition(*window).x << " " << sf::Mouse::getPosition(*window).y << std::endl;
+        std::cout << player_aim.getPosition().x << " " << player_aim.getPosition().y << std::endl;
+    }
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        // b2Vec2 playerPos = player.body->GetPosition();
+        // playerPos *= PPM;
+
+        if (!hook_end_attached)
+        {
+            b2Vec2 playerPos = player.body->GetPosition();
+            playerPos *= PPM;
+            int mouseX = sf::Mouse::getPosition(*window).x;
+            int mouseY = SCREEN_HEIGHT - sf::Mouse::getPosition(*window).y;
+            float angle_rad = atan2(mouseY - playerPos.y, mouseX - playerPos.x);
+            aim_angle = angle_rad * 180.0f / b2_pi;
+
+            // float angle_rad = angle * 180.0f / b2_pi;
+            std::cout << "player: " << playerPos.x << " " << playerPos.y << std::endl;
+            std::cout << "mouse: " << mouseX << " " << mouseY << std::endl;
+            std::cout << "angle: " << aim_angle << std::endl;
+
+            b2Vec2 direction(cos(angle_rad), sin(angle_rad));
+            direction *= 8;
+            RayCastClosestCallback callback;
+            playerPos.x /= PPM;
+            playerPos.y /= PPM;
+            world->RayCast(&callback, playerPos, playerPos + direction);
+
+            if (callback.m_closestFixture)
+            {
+                b2Vec2 closestPoint = callback.m_closestPoint;
+                std::cout << "closest point: " << closestPoint.x << " " << closestPoint.y << std::endl;
+
+                // Box b = createBox(closestPoint.x * PPM, closestPoint.y * PPM, 10, 10, 1.f, 0.7f, sf::Color::Red);
+                hook_end = createGround(closestPoint.x * PPM, closestPoint.y * PPM, 10, 10, sf::Color::Green);
+                // boxes.push_back(b);
+
+                // joint
+                hook_joint_def.Initialize(player.body, hook_end.body, player.body->GetWorldCenter(), hook_end.body->GetWorldCenter());
+                hook_joint_def.collideConnected = true;
+                hook_joint_def.stiffness = 0.f;
+                hook_joint_def.damping = 0.f;
+
+                float value = pow(closestPoint.x - player.body->GetWorldCenter().x, 2) + pow(closestPoint.y - player.body->GetWorldCenter().y, 2);
+                float distance = sqrt(value);
+
+                hook_joint = (b2DistanceJoint *)world->CreateJoint(&hook_joint_def);
+                hook_joint->SetMinLength(0.f);
+                hook_joint->SetLength(distance);
+                hook_joint->SetMaxLength(distance);
+
+                player.body->ApplyForceToCenter(b2Vec2(0, -1), true);
+
+                hook_end_attached = true;
+            }
+        }
+        // std::cout << player.body->GetPosition().x * PPM << " " << player.body->GetPosition().y * PPM << std::endl;
+    }
+
+    if (world->GetJointCount())
+    {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            world->DestroyJoint(hook_joint);
+            hook_end_attached = false;
+        }
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            hook_joint->SetMaxLength(hook_joint->GetMaxLength() - 0.1f);
+        }
     }
 }
 
 void GameState::update(float delta_time)
 {
     // b2d
-    world->Step(delta_time, 6, 2);
+    world->Step(delta_time * 2, 6, 2);
+
+    // player's aim position
+    player_aim.setPosition(player.body->GetPosition().x * PPM, SCREEN_HEIGHT - player.body->GetPosition().y * PPM);
+
+    // player's aim angle
+    // int mouse_x = sf::Mouse::getPosition(*window).x;
+    // int mouse_y = sf::Mouse::getPosition(*window).y;
+    // int aim_x = player_aim.getPosition().x;
+    // int aim_y = player_aim.getPosition().y;
+    // aim_angle = atan2(mouse_y - aim_y, mouse_x - aim_x) * DEG_PER_RAD + 90;
+    player_aim.setRotation(90 - aim_angle);
 }
 
 void GameState::draw(float delta_time)
@@ -102,32 +210,59 @@ void GameState::draw(float delta_time)
 
     render(*window, boxes);
 
-    // player
-    sf::RectangleShape rect;
-    rect.setPosition(player.body->GetPosition().x * PPM, SCREEN_HEIGHT - (player.body->GetPosition().y * PPM));
-    rect.setOrigin(player.width / 2, player.height / 2);
-    rect.setSize(sf::Vector2f(player.width, player.height));
-    rect.setRotation(-1 * player.body->GetAngle() * DEG_PER_RAD);
-    rect.setFillColor(player.color);
-    window->draw(rect);
+    // // p1
+    // sf::RectangleShape rect2;
+    // rect2.setPosition(p1.body->GetPosition().x * PPM, SCREEN_HEIGHT - (p1.body->GetPosition().y * PPM));
+    // rect2.setOrigin(p1.width / 2, p1.height / 2);
+    // rect2.setSize(sf::Vector2f(p1.width, p1.height));
+    // rect2.setRotation(-1 * p1.body->GetAngle() * DEG_PER_RAD);
+    // rect2.setFillColor(p1.color);
+    // window->draw(rect2);
 
-    // p1
-    sf::RectangleShape rect2;
-    rect2.setPosition(p1.body->GetPosition().x * PPM, SCREEN_HEIGHT - (p1.body->GetPosition().y * PPM));
-    rect2.setOrigin(p1.width / 2, p1.height / 2);
-    rect2.setSize(sf::Vector2f(p1.width, p1.height));
-    rect2.setRotation(-1 * p1.body->GetAngle() * DEG_PER_RAD);
-    rect2.setFillColor(p1.color);
-    window->draw(rect2);
+    // // p2
+    // sf::RectangleShape rect3;
+    // rect3.setPosition(p2.body->GetPosition().x * PPM, SCREEN_HEIGHT - (p2.body->GetPosition().y * PPM));
+    // rect3.setOrigin(p2.width / 2, p2.height / 2);
+    // rect3.setSize(sf::Vector2f(p2.width, p2.height));
+    // rect3.setRotation(-1 * p2.body->GetAngle() * DEG_PER_RAD);
+    // rect3.setFillColor(p2.color);
+    // window->draw(rect3);
 
-    // p2
-    sf::RectangleShape rect3;
-    rect3.setPosition(p2.body->GetPosition().x * PPM, SCREEN_HEIGHT - (p2.body->GetPosition().y * PPM));
-    rect3.setOrigin(p2.width / 2, p2.height / 2);
-    rect3.setSize(sf::Vector2f(p2.width, p2.height));
-    rect3.setRotation(-1 * p2.body->GetAngle() * DEG_PER_RAD);
-    rect3.setFillColor(p2.color);
-    window->draw(rect3);
+    // // draw boxes
+    // for (int i = 0; i < boxes.size(); i++)
+    // {
+    //     Box *box = &boxes[i];
+    //     box->shape->setPosition(box->body->GetPosition().x * PPM, SCREEN_HEIGHT - (box->body->GetPosition().y * PPM));
+    //     box->shape->setOrigin(box->width / 2, box->height / 2);
+    //     box->shape->setSize(sf::Vector2f(box->width, box->height));
+    //     box->shape->setRotation(-1 * box->body->GetAngle() * DEG_PER_RAD);
+    //     box->shape->setFillColor(box->color);
+    //     window->draw(*box->shape);
+    // }
+
+    // draw hook
+    if (hook_end_attached)
+    {
+        sf::RectangleShape hook;
+        hook.setPosition(hook_end.body->GetPosition().x * PPM, SCREEN_HEIGHT - (hook_end.body->GetPosition().y * PPM));
+        hook.setOrigin(hook_end.width / 2, hook_end.height / 2);
+        hook.setSize(sf::Vector2f(hook_end.width, hook_end.height));
+        hook.setRotation(-1 * hook_end.body->GetAngle() * DEG_PER_RAD);
+        hook.setFillColor(hook_end.color);
+        window->draw(hook);
+    }
+
+    // draw player
+    sf::RectangleShape rect_player;
+    rect_player.setPosition(player.body->GetPosition().x * PPM, SCREEN_HEIGHT - (player.body->GetPosition().y * PPM));
+    rect_player.setOrigin(player.width / 2, player.height / 2);
+    rect_player.setSize(sf::Vector2f(player.width, player.height));
+    rect_player.setRotation(-1 * player.body->GetAngle() * DEG_PER_RAD);
+    rect_player.setFillColor(player.color);
+    window->draw(rect_player);
+
+    // draw player's aim
+    window->draw(player_aim);
 
     window->draw(this->pause_button);
     window->display();
@@ -175,6 +310,9 @@ Box GameState::createGround(float x, float y, float width, float height, sf::Col
     // For a static body, we don't need a custom fixture definition, this will do:
     groundBody->CreateFixture(&groundBox, 0.0f);
 
+    // // Create SFML shape
+    // sf::RectangleShape *shape = new sf::RectangleShape(sf::Vector2f(width, height));
+
     return Box{width, height, color, groundBody};
 }
 
@@ -204,63 +342,60 @@ void GameState::render(sf::RenderWindow &w, std::vector<Box> &boxes)
     }
 }
 
-// ------------------- b2d -------------------
+// ------------------- boxes -------------------
 
-// void GameState::create_ground(b2World &world, float x, float y)
-// {
-//     float scale = 30.f;
+void GameState::init_boxes()
+{
+    Box b1 = createGround((SCREEN_WIDTH / 2) - 300, 0 + 100 / 2, 300, 100, sf::Color::White);
+    boxes.push_back(b1);
 
-//     b2BodyDef *body_def = new b2BodyDef();
-//     body_def->position.Set(x / 30.f, y / 30.f);
-//     // body_def.type = b2_staticBody;
-//     b2Body *body = world.CreateBody(body_def);
+    Box b2 = createGround((SCREEN_WIDTH / 2) + 300, 0 + 100 / 2, 300, 100, sf::Color::White);
+    boxes.push_back(b2);
 
-//     b2PolygonShape shape;
-//     shape.SetAsBox((800.f / 2) / scale, (16.f / 2) / scale);
-//     body->CreateFixture(&shape, 0.0f);
+    Box b3 = createGround((SCREEN_WIDTH / 2), 350, 300, 80, sf::Color::White);
+    boxes.push_back(b3);
+}
 
-//     // b2FixtureDef fixture_def;
-//     // fixture_def.density = 0.f;
-//     // fixture_def.shape = &shape;
-//     // body->CreateFixture(&fixture_def);
+// -------------- player movement --------------
 
-//     sf::RectangleShape *rect = new sf::RectangleShape();
-//     rect->setFillColor(sf::Color::White);
+void GameState::move_player_right()
+{
+    if (player.body->GetLinearVelocity().x <= 7)
+    {
+        player.body->ApplyLinearImpulseToCenter(b2Vec2(30, 0), true);
+        // player.body->ApplyLinearImpulse(b2Vec2(0.5, 0), b2Vec2(player.body->GetPosition().x, player.body->GetPosition().y - player.height / 2 / PPM), true);
+    }
+}
 
-//     Body *new_body = new Body();
-//     new_body->b2_body = *body_def;
-//     new_body->rect = *rect;
-// }
+void GameState::move_player_left()
+{
+    // std::cout << player.body->GetLinearVelocity().x << std::endl;
+    if (player.body->GetLinearVelocity().x >= -7)
+    {
+        player.body->ApplyLinearImpulseToCenter(b2Vec2(-30, 0), true);
+    }
+}
 
-// void GameState::create_box(b2World &world, int mouse_x, int mouse_y)
-// {
-//     //     float scale = 30.f;
+void GameState::jump()
+{
+    player.body->ApplyLinearImpulseToCenter(b2Vec2(0, 50), true);
+}
 
-//     //     b2BodyDef body_def;
-//     //     body_def.position = b2Vec2(mouse_x / scale, mouse_y / scale);
-//     //     body_def.type = b2_dynamicBody;
-//     //     b2Body *body = world.CreateBody(&body_def);
+// raycast
 
-//     //     b2PolygonShape shape;
-//     //     shape.SetAsBox((32.f / 2) / scale, (32.f / 2) / scale);
-//     //     b2FixtureDef fixture_def;
-//     //     fixture_def.density = 1.f;
-//     //     fixture_def.friction = 0.7f;
-//     //     fixture_def.shape = &shape;
-//     //     body->CreateFixture(&fixture_def);
+float RayCastClosestCallback::ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float fraction)
+{
+    if (fixture->GetShape()->GetType() == b2Shape::e_chain)
+    {
+        return -1.0f;
+    }
 
-//     float scale = 30.f;
+    if (fraction < m_closestFraction)
+    {
+        m_closestFraction = fraction;
+        m_closestPoint = point;
+        m_closestFixture = fixture;
+    }
 
-//     b2BodyDef body_def;
-//     body_def.position.Set(mouse_x / scale, mouse_y / scale);
-//     body_def.type = b2_staticBody;
-//     b2Body *body = world.CreateBody(&body_def);
-
-//     b2PolygonShape shape;
-//     shape.SetAsBox((32.f / 2) / scale, (32.f / 2) / scale);
-//     b2FixtureDef fixture_def;
-//     fixture_def.density = 1.f;
-//     fixture_def.friction = 0.7f;
-//     fixture_def.shape = &shape;
-//     body->CreateFixture(&fixture_def);
-// }
+    return fraction;
+}
