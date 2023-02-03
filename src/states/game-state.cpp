@@ -8,19 +8,14 @@ void GameState::init()
     pause_button.setTexture(assets->get_texture("pause_button"));
     pause_button.setPosition(window->getSize().x - pause_button.getLocalBounds().width - 10, pause_button.getPosition().y + 10);
 
-    // init ball
-    ball.setRadius(ballRadius - 3);
-    ball.setOutlineThickness(3);
-    ball.setOutlineColor(sf::Color::White);
-    ball.setFillColor(sf::Color::White);
-    ball.setOrigin(ballRadius / 2, ballRadius / 2);
-    ball.setPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    // b2d world, gravity: 9 m/s^2
+    world = new b2World(b2Vec2(0, -9));
 
-    do
-    {
-        ballAngle = (std::rand() % 360) * 2 * pi / 360;
-    } while (std::abs(std::cos(ballAngle)) < 0.7f);
+    // create player
+    player = new Player(world, 150, 130, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
 
+    // all boxes in this level
+    init_boxes();
 }
 
 void GameState::handle_input()
@@ -41,43 +36,75 @@ void GameState::handle_input()
         }
     }
 
+    // player movement
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        player->move_player_left();
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        player->move_player_right();
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        player->action_jump_glide();
+    }
+
+    // grappling hook
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        player->use_hook(*window);
+    }
+
+    // if exists some joint, it's definitely the hook joint! (gambiarra)
+    if (world->GetJointCount())
+    {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            player->destroy_hook();
+        }
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            player->decrease_hook_length();
+        }
+    }
+
 }
 
 void GameState::update(float delta_time)
 {
-    // move ball
-    float factor = ballSpeed * delta_time;
-    ball.move(std::cos(ballAngle) * factor, std::sin(ballAngle) * factor);
+    // b2d
+    world->Step(delta_time * 2, 6, 2);
 
-    // check colisions
-    if (ball.getPosition().x - ballRadius < 0.f)
-    {
-        ballAngle = -ballAngle + pi;
-        ball.setPosition(ballRadius + 0.1f, ball.getPosition().y);
-    }
-    if (ball.getPosition().x + ballRadius > SCREEN_WIDTH)
-    {
-        ballAngle = -ballAngle + pi;
-        ball.setPosition(SCREEN_WIDTH - ballRadius - 0.1f, ball.getPosition().y);
-    }
-    if (ball.getPosition().y - ballRadius < 0.f)
-    {
-        ballAngle = -ballAngle;
-        ball.setPosition(ball.getPosition().x, ballRadius + 0.1f);
-    }
-    if (ball.getPosition().y + ballRadius > SCREEN_HEIGHT)
-    {
-        ballAngle = -ballAngle;
-        ball.setPosition(ball.getPosition().x, SCREEN_HEIGHT - ballRadius - 0.1f);
-    }
+    // update player (used in movement states)
+    player->update_player_state(*window);
+
 }
 
 void GameState::draw(float delta_time)
 {
     window->clear(sf::Color(56, 42, 55));
 
-    window->draw(this->ball);
-    
+    render_box_vector(*window, boxes);
+
+    player->render_player(*window);
+    player->render_player_aim(*window);
+    player->render_hook(*window);
+
     window->draw(this->pause_button);
     window->display();
+}
+
+// ------------------- boxes -------------------
+
+void GameState::init_boxes()
+{
+    Box b1 = create_ground(world, (SCREEN_WIDTH / 2) - 300, 0 + 100 / 2, 300, 100, sf::Color::White);
+    boxes.push_back(b1);
+
+    Box b2 = create_ground(world, (SCREEN_WIDTH / 2) + 300, 0 + 100 / 2, 300, 100, sf::Color::White);
+    boxes.push_back(b2);
+
+    Box b3 = create_ground(world, (SCREEN_WIDTH / 2), 350, 300, 80, sf::Color::White);
+    boxes.push_back(b3);
 }

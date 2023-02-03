@@ -1,9 +1,9 @@
 /**
  * @file game-state.hpp
  * @date 2023-01-06
- * 
+ *
  * @brief Example game state. Runs a bouncing ball demo.
- * 
+ *
  */
 
 #ifndef PTE_GAME_STATE_HPP
@@ -13,18 +13,25 @@
 #include "engine/include/generic-state.hpp"
 #include "states/pause-state.hpp"
 #include "definitions.hpp"
+#include "box2d/box2d.h"
+
+#include "game-objects.hpp"
+#include "player.hpp"
+
+#define PLAYER_STEP 5
 
 class GameState : public pte::GenericState
 {
 private:
     sf::Sprite pause_button;
 
-    // ball
-    float pi = 3.14159f;
-    float ballRadius = 10.f;
-    float ballSpeed = 400.f;
-    float ballAngle = 0.f;
-    sf::CircleShape ball;
+    // b2d
+    b2World *world;
+
+    // simulation
+    std::vector<Box> boxes;
+    Player *player;
+    
 
 public:
     using GenericState::GenericState;
@@ -33,6 +40,9 @@ public:
     void handle_input();
     void update(float delta_time);
     void draw(float delta_time);
+
+    // boxes
+    void init_boxes();
 
 };
 
