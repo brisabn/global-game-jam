@@ -7,7 +7,7 @@ ifeq ($(OS),Windows_NT)
 	SUFFIX	= .exe
 	RUN		= libs/sfml-win/bin/${TARGET}${SUFFIX}
 	OUT_DIR	= libs/sfml-win/bin/
-	MKDIR	= (@mkdir $(subst /,\,$(dir $@)))&
+	MKDIR	= @if not exist $(subst /,\,$(dir $@)) mkdir $(subst /,\,$(dir $@))
 else
 	SYSTEM	= linux
 	SUFFIX	=
@@ -27,9 +27,9 @@ rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2)$(filter $(subst
 
 CC			:= g++
 CXXFLAGS	:= -std=c++11 -g -Wall
-LDFLAGS		:= -Llibs/sfml-${SYSTEM}/lib -lsfml-audio -lsfml-graphics -lsfml-window -lsfml-system -Llibs/box2d-linux -lbox2d
+LDFLAGS		:= -Llibs/sfml-${SYSTEM}/lib -lsfml-audio -lsfml-graphics -lsfml-window -lsfml-system -Llibs/box2d/${SYSTEM} -lbox2d
 BUILD		:= ./build
-INCLUDE		:= -I ./ -I include -I engine/include -I libs/sfml-${SYSTEM}/include -I libs/box2d-linux/include
+INCLUDE		:= -I . -I include -I engine/include -I libs/sfml-${SYSTEM}/include -I libs/box2d/include
 
 SRC			:= $(call rwildcard, src, *.cpp) $(call rwildcard, engine, *.cpp)
 OBJECTS		:= $(SRC:%.cpp=$(BUILD)/%.o)
