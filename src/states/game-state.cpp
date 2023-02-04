@@ -51,8 +51,12 @@ void GameState::handle_input()
         }
     }
 
-    // player movement
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    // player movement (jump have priority)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        player->action_jump();
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         player->move_player_left();
     }
@@ -64,10 +68,7 @@ void GameState::handle_input()
     {
         player->action_glide();
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-    {
-        player->action_jump();
-    }
+    
 
     // grappling hook
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -96,6 +97,7 @@ void GameState::update(float delta_time)
 
     // update player (used in movement states)
     player->update_player_state(*window, view);
+    player->update_player_animation(delta_time);
 
     // set camera position relative to the player
     int camera_x = SCREEN_WIDTH / 2;
@@ -121,7 +123,7 @@ void GameState::draw(float delta_time)
     render_box_vector(*window, hook_boxes, roots_texture);
 
     player->render_player(*window);
-    player->render_player_aim(*window);
+    // player->render_player_aim(*window);
     player->render_hook(*window);
 
     // set default view
