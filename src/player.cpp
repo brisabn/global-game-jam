@@ -14,6 +14,7 @@ float RayCastClosestCallback::ReportFixture(b2Fixture *fixture, const b2Vec2 &po
         m_closestFraction = fraction;
         m_closestPoint = point;
         m_closestFixture = fixture;
+        m_closestBody = fixture->GetBody();
     }
 
     return fraction;
@@ -57,6 +58,7 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
     player_on_ground = false;
     in_action_glide = false;
     in_action_jump = false;
+    is_hook_impulse_applied = false;
 
     // player's aim indicator
     player_aim.setSize(sf::Vector2f(10, 30));
@@ -99,7 +101,17 @@ void Player::move_player_right()
 
 void Player::action_jump_glide()
 {
-    if (player_on_ground)
+
+    if (hook_end_attached && !is_hook_impulse_applied)
+    {
+        std::cout << aim_angle << std::endl;
+        b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
+        direction *= 1000;
+        body->ApplyLinearImpulseToCenter(direction, true);
+        is_hook_impulse_applied = true;
+        destroy_hook();
+    }
+    else if (player_on_ground)
     {
         player_on_ground = false;
         body->ApplyLinearImpulseToCenter(b2Vec2(0, 250), true);
@@ -127,25 +139,34 @@ void Player::update_player_state(sf::RenderWindow &window)
     {
         for (b2ContactEdge *edge = body->GetContactList(); edge; edge = edge->next)
         {
-            // Check if the dynamic body is in contact with the other body
             if (edge->contact->IsTouching())
             {
-                // The dynamic body is in contact with the other body
-                // You can now perform some action based on the contact
-                player_on_ground = true;
-                color = sf::Color::Magenta;
+                b2WorldManifold worldManifold;
+                edge->contact->GetWorldManifold(&worldManifold);
 
-                if (in_action_glide)
+                if (worldManifold.normal.y < 0)
                 {
-                    in_action_glide = false;
-                    body->SetGravityScale(original_gravity_scale);
-                }
+                    // The second body is below the first body
+                    player_on_ground = true;
+                    color = sf::Color::Magenta;
 
-                break;
+                    if (in_action_glide)
+                    {
+                        in_action_glide = false;
+                        body->SetGravityScale(original_gravity_scale);
+                    }
+
+                    break;
+                }
+                else
+                {
+                    // The second body is not below the first body
+                    player_on_ground = false;
+                }
             }
             else
             {
-                // The fynamic body is not in contact with another body
+                // The dynamic body is not in contact with another body
                 player_on_ground = false;
             }
         }
@@ -171,10 +192,9 @@ void Player::update_player_state(sf::RenderWindow &window)
     player_aim.setRotation(-aim_angle + 90);
 }
 
-
 // --------------------- hook ----------------------
 
-void Player::use_hook(sf::RenderWindow &window)
+void Player::use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec)
 {
     if (!hook_end_attached && !in_action_glide)
     {
@@ -182,10 +202,10 @@ void Player::use_hook(sf::RenderWindow &window)
         playerPos *= PPM;
         int mouseX = sf::Mouse::getPosition(window).x;
         int mouseY = SCREEN_HEIGHT - sf::Mouse::getPosition(window).y;
-        float angle_rad = atan2(mouseY - playerPos.y, mouseX - playerPos.x);
-        aim_angle = angle_rad * 180.0f / b2_pi;
+        aim_angle_rad = atan2(mouseY - playerPos.y, mouseX - playerPos.x);
+        aim_angle = aim_angle_rad * 180.0f / b2_pi;
 
-        b2Vec2 direction(cos(angle_rad), sin(angle_rad));
+        b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
         direction *= 10;
         RayCastClosestCallback callback;
         playerPos.x /= PPM;
@@ -195,26 +215,33 @@ void Player::use_hook(sf::RenderWindow &window)
         // if something is captured in the beam
         if (callback.m_closestFixture)
         {
-            b2Vec2 closestPoint = callback.m_closestPoint;
 
-            hook_end = create_ground(world, closestPoint.x * PPM, closestPoint.y * PPM, 10, 10, sf::Color::Green);
+            for (auto b : box_vec)
+            {
+                if (b.body == callback.m_closestBody)
+                {
+                    b2Vec2 closestPoint = callback.m_closestPoint;
 
-            // joint
-            hook_joint_def.Initialize(body, hook_end.body, body->GetWorldCenter(), hook_end.body->GetWorldCenter());
-            hook_joint_def.collideConnected = true;
-            hook_joint_def.stiffness = 0.f;
-            hook_joint_def.damping = 0.f;
+                    hook_end = create_ground(world, closestPoint.x * PPM, closestPoint.y * PPM, 10, 10, sf::Color::Green, true);
 
-            float value = pow(closestPoint.x - body->GetWorldCenter().x, 2) + pow(closestPoint.y - body->GetWorldCenter().y, 2);
-            float distance = sqrt(value);
+                    // joint
+                    hook_joint_def.Initialize(body, hook_end.body, body->GetWorldCenter(), hook_end.body->GetWorldCenter());
+                    hook_joint_def.collideConnected = true;
+                    hook_joint_def.stiffness = 0.f;
+                    hook_joint_def.damping = 0.f;
 
-            hook_joint = (b2DistanceJoint *)world->CreateJoint(&hook_joint_def);
-            hook_joint->SetMinLength(0.f);
-            hook_joint->SetLength(distance);
-            hook_joint->SetMaxLength(distance);
+                    float value = pow(closestPoint.x - body->GetWorldCenter().x, 2) + pow(closestPoint.y - body->GetWorldCenter().y, 2);
+                    float distance = sqrt(value);
 
-            body->ApplyForceToCenter(b2Vec2(0, -1), true);
-            hook_end_attached = true;
+                    hook_joint = (b2DistanceJoint *)world->CreateJoint(&hook_joint_def);
+                    hook_joint->SetMinLength(0.f);
+                    hook_joint->SetLength(distance);
+                    hook_joint->SetMaxLength(distance);
+
+                    body->ApplyForceToCenter(b2Vec2(0, -1), true);
+                    hook_end_attached = true;
+                }
+            }
         }
     }
 }
@@ -250,5 +277,7 @@ void Player::decrease_hook_length()
 void Player::destroy_hook()
 {
     world->DestroyJoint(hook_joint);
+    world->DestroyBody(hook_end.body);
     hook_end_attached = false;
+    is_hook_impulse_applied = false;
 }

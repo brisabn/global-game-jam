@@ -21,6 +21,7 @@ struct RayCastClosestCallback : public b2RayCastCallback
     b2Fixture *m_closestFixture = nullptr;
     b2Vec2 m_closestPoint;
     float m_closestFraction = 1.0f;
+    b2Body *m_closestBody = nullptr;
 
     float ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float fraction);
 };
@@ -42,6 +43,7 @@ private:
     bool player_on_ground;
     bool in_action_jump;
     bool in_action_glide;
+    bool is_hook_impulse_applied;
 
     float original_gravity_scale;
 
@@ -62,7 +64,7 @@ public:
     void move_player_right();
     void move_player_left();
     void action_jump_glide();
-    void use_hook(sf::RenderWindow &window);
+    void use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec);
     void decrease_hook_length();
     void destroy_hook();
 

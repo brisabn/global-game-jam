@@ -25,7 +25,7 @@ Box create_box(b2World *world, float x, float y, float width, float height, floa
     return Box{width, height, color, boxBody};
 }
 
-Box create_ground(b2World *world, float x, float y, float width, float height, sf::Color color)
+Box create_ground(b2World *world, float x, float y, float width, float height, sf::Color color, bool is_sensor)
 {
     int b2d_x = x + width / 2;
     int b2d_y = SCREEN_HEIGHT - y - height / 2;
@@ -41,7 +41,12 @@ Box create_ground(b2World *world, float x, float y, float width, float height, s
     // Now we have a body for our Box object
     b2Body *groundBody = world->CreateBody(&groundBodyDef);
     // For a static body, we don't need a custom fixture definition, this will do:
-    groundBody->CreateFixture(&groundBox, 0.0f);
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &groundBox;
+    fixtureDef.density = 0.0f;
+    fixtureDef.isSensor = is_sensor;
+
+    groundBody->CreateFixture(&fixtureDef);
 
     return Box{width, height, color, groundBody};
 }
