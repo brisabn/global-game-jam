@@ -12,7 +12,7 @@ void GameState::init()
     world = new b2World(b2Vec2(0, -9));
 
     // create player
-    player = new Player(world, 150, 130, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
+    player = new Player(world, 200, 180, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
 
     // all boxes in this level
     init_boxes();
@@ -68,7 +68,6 @@ void GameState::handle_input()
             player->decrease_hook_length();
         }
     }
-
 }
 
 void GameState::update(float delta_time)
@@ -78,7 +77,6 @@ void GameState::update(float delta_time)
 
     // update player (used in movement states)
     player->update_player_state(*window);
-
 }
 
 void GameState::draw(float delta_time)
@@ -99,12 +97,13 @@ void GameState::draw(float delta_time)
 
 void GameState::init_boxes()
 {
-    Box b1 = create_ground(world, (SCREEN_WIDTH / 2) - 300, 0 + 100 / 2, 300, 100, sf::Color::White);
-    boxes.push_back(b1);
+    boxes.push_back(create_ground(world, 162, 480, 700, 120, sf::Color::White));
+    boxes.push_back(create_ground(world, 812, -900, 50, 1500, sf::Color::White));
+    boxes.push_back(create_ground(world, 162, -940, 50, 1300, sf::Color::White));
 
-    Box b2 = create_ground(world, (SCREEN_WIDTH / 2) + 300, 0 + 100 / 2, 300, 100, sf::Color::White);
-    boxes.push_back(b2);
-
-    Box b3 = create_ground(world, (SCREEN_WIDTH / 2), 350, 300, 80, sf::Color::White);
-    boxes.push_back(b3);
+    // objetos
+    boxes.push_back(create_ground(world, 350, 430, 100, 50, sf::Color::White));
+    boxes.push_back(create_ground(world, 583, 410, 230, 70, sf::Color::White));
+    boxes.push_back(create_ground(world, 708, 270, 40, 40, sf::Color::Green));
+    boxes.push_back(create_ground(world, 420, 235, 192, 59, sf::Color::White));
 }
