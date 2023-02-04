@@ -132,6 +132,39 @@ void Player::action_jump_glide()
     }
 }
 
+void Player::action_jump()
+{
+    if (hook_end_attached && !is_hook_impulse_applied)
+    {
+        std::cout << aim_angle << std::endl;
+        b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
+        direction *= 1000;
+        body->ApplyLinearImpulseToCenter(direction, true);
+        is_hook_impulse_applied = true;
+        destroy_hook();
+    }
+    else if (player_on_ground)
+    {
+        player_on_ground = false;
+        body->ApplyLinearImpulseToCenter(b2Vec2(0, 250), true);
+        // in in_action_jump = true;
+
+        color = sf::Color::Cyan;
+    }
+}
+
+void Player::action_glide()
+{
+    if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached)
+    {
+        in_action_glide = true;
+        body->SetGravityScale(0.2f);
+        body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, 0));
+        body->ApplyLinearImpulseToCenter(b2Vec2(0, 80), true);
+        color = sf::Color::Yellow;
+    }
+}
+
 void Player::update_player_state(sf::RenderWindow &window)
 {
     // movement state

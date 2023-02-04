@@ -50,9 +50,13 @@ void GameState::handle_input()
     {
         player->move_player_right();
     }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    {
+        player->action_glide();
+    }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
     {
-        player->action_jump_glide();
+        player->action_jump();
     }
 
     // grappling hook
@@ -121,10 +125,18 @@ void GameState::draw(float delta_time)
 
 void GameState::init_boxes()
 {
-    boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2) - 300, 0 + 100 / 2, 300, 100, sf::Color::White, false));
-    boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2) + 300, 0 + 100 / 2, 300, 100, sf::Color::White, false));
-    boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2), 350, 300, 80, sf::Color::White, false));
+    // paredes
+    boxes.push_back(create_ground(world, 812, -900, 50, 1500, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 162, -940, 50, 1300, sf::Color::White, false));
 
-    hook_boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2), 321, 280, 30, sf::Color::Red, true));
-    hook_boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2) + 300, 0 + 600 / 2, 40, 40, sf::Color::Red, true));
+    // objetos
+    boxes.push_back(create_ground(world, 350, 430, 100, 50, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 583, 410, 230, 70, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 420, 235, 192, 59, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 162, 480, 700, 120, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 212, 117, 63, 60, sf::Color::White, false));
+
+    // hooks
+    hook_boxes.push_back(create_ground(world, 708, 270, 40, 40, sf::Color::Green, true));
+    hook_boxes.push_back(create_ground(world, 330, 176, 40, 40, sf::Color::Green, true));
 }
