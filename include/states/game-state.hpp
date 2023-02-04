@@ -32,6 +32,10 @@ private:
     std::vector<Box> boxes;
     std::vector<Box> hook_boxes;
     Player *player;
+
+    // camera
+    sf::View view;
+    sf::View default_view;
     
 
 public:

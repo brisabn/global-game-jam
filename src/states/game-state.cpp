@@ -16,6 +16,11 @@ void GameState::init()
 
     // all boxes in this level
     init_boxes();
+
+    // configure camera
+    view.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+    view.setCenter(sf::Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+    default_view = view;
 }
 
 void GameState::handle_input()
@@ -77,11 +82,27 @@ void GameState::update(float delta_time)
 
     // update player (used in movement states)
     player->update_player_state(*window);
+
+    // set camera position relative to the player
+    int camera_x = SCREEN_WIDTH / 2;
+    int camera_y = SCREEN_HEIGHT - player->body->GetPosition().y * PPM;
+
+    if (camera_y > SCREEN_HEIGHT / 2)
+    {
+        std::cout << camera_y << std::endl;
+        camera_y = SCREEN_HEIGHT / 2;
+    }
+
+    view.setCenter(camera_x, camera_y);
+
 }
 
 void GameState::draw(float delta_time)
 {
     window->clear(sf::Color(56, 42, 55));
+
+    // set camera
+    window->setView(view);
 
     render_box_vector(*window, boxes);
     render_box_vector(*window, hook_boxes);
@@ -90,6 +111,8 @@ void GameState::draw(float delta_time)
     player->render_player_aim(*window);
     player->render_hook(*window);
 
+    // set default view
+    window->setView(default_view);
     window->draw(this->pause_button);
     window->display();
 }
