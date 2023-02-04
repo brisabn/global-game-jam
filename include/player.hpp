@@ -60,7 +60,7 @@ public:
 
     Player(b2World *world, int x, int y, float width, float height, float density, float friction, sf::Color color);
 
-    void update_player_state(sf::RenderWindow &window);
+    void update_player_state(sf::RenderWindow &window, sf::View &view);
     void move_player_right();
     void move_player_left();
     void action_jump_glide();

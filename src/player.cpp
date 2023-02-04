@@ -104,7 +104,7 @@ void Player::action_jump_glide()
 
     if (hook_end_attached && !is_hook_impulse_applied)
     {
-        std::cout << aim_angle << std::endl;
+        // std::cout << aim_angle << std::endl;
         b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
         direction *= 1000;
         body->ApplyLinearImpulseToCenter(direction, true);
@@ -136,7 +136,7 @@ void Player::action_jump()
 {
     if (hook_end_attached && !is_hook_impulse_applied)
     {
-        std::cout << aim_angle << std::endl;
+        // std::cout << aim_angle << std::endl;
         b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
         direction *= 1000;
         body->ApplyLinearImpulseToCenter(direction, true);
@@ -165,7 +165,7 @@ void Player::action_glide()
     }
 }
 
-void Player::update_player_state(sf::RenderWindow &window)
+void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
 {
     // movement state
     if (!player_on_ground)
@@ -205,12 +205,17 @@ void Player::update_player_state(sf::RenderWindow &window)
         }
     }
 
+    // -------------------- angle --------------------
     // player's aim angle and position
     player_aim.setPosition(sf::Vector2f(body->GetPosition().x * PPM, SCREEN_HEIGHT - body->GetPosition().y * PPM));
 
-    int end_x = sf::Mouse::getPosition(window).x;
-    int end_y = SCREEN_HEIGHT - sf::Mouse::getPosition(window).y;
+    // get mouse positions relative to the view
+    sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+    sf::Vector2f world_pos = window.mapPixelToCoords(mouse_pos, view);
+    int end_x = world_pos.x;
+    int end_y = SCREEN_HEIGHT - world_pos.y;
 
+    // use the hook end instead if attached
     if (hook_end_attached)
     {
         end_x = hook_end.body->GetPosition().x * PPM;
@@ -219,9 +224,13 @@ void Player::update_player_state(sf::RenderWindow &window)
 
     b2Vec2 player_pos = body->GetPosition();
     player_pos *= PPM;
-    aim_angle_rad = atan2(end_y - player_pos.y, end_x - player_pos.x);
+
+    float delta_x = end_x - player_pos.x;
+    float delta_y = end_y - player_pos.y;
+    aim_angle_rad = atan2(delta_y, delta_x);
     aim_angle = aim_angle_rad * 180.0f / b2_pi;
 
+    // set player aim rotation
     player_aim.setRotation(-aim_angle + 90);
 }
 
@@ -231,31 +240,49 @@ void Player::use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec)
 {
     if (!hook_end_attached && !in_action_glide)
     {
-        b2Vec2 playerPos = body->GetPosition();
-        playerPos *= PPM;
-        int mouseX = sf::Mouse::getPosition(window).x;
-        int mouseY = SCREEN_HEIGHT - sf::Mouse::getPosition(window).y;
-        aim_angle_rad = atan2(mouseY - playerPos.y, mouseX - playerPos.x);
-        aim_angle = aim_angle_rad * 180.0f / b2_pi;
+        // angle is updated every frame with update_player_state() method
 
+        int hook_range = 10;
+
+        // get closest point using raycast and the pointing vector
         b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
-        direction *= 10;
+        direction *= hook_range;
         RayCastClosestCallback callback;
-        playerPos.x /= PPM;
-        playerPos.y /= PPM;
-        world->RayCast(&callback, playerPos, playerPos + direction);
+        world->RayCast(&callback, body->GetPosition(), body->GetPosition() + direction);
 
         // if something is captured in the beam
         if (callback.m_closestFixture)
         {
-
             for (auto b : box_vec)
             {
                 if (b.body == callback.m_closestBody)
                 {
                     b2Vec2 closestPoint = callback.m_closestPoint;
 
-                    hook_end = create_ground(world, closestPoint.x * PPM, closestPoint.y * PPM, 10, 10, sf::Color::Green, true);
+                    // -------------------- create new hook body --------------------
+
+                    float h_width = 10, h_height = 10;
+
+                    // Static body definition
+                    b2BodyDef groundBodyDef;
+                    groundBodyDef.position.Set(closestPoint.x, closestPoint.y);
+
+                    // Shape definition
+                    b2PolygonShape groundBox;
+                    groundBox.SetAsBox(h_width / 2 / PPM, h_height / 2 / PPM);
+
+                    // Now we have a body for our Box object
+                    b2Body *groundBody = world->CreateBody(&groundBodyDef);
+                    b2FixtureDef fixtureDef;
+                    fixtureDef.shape = &groundBox;
+                    fixtureDef.density = 0.0f;
+                    fixtureDef.isSensor = true;
+
+                    groundBody->CreateFixture(&fixtureDef);
+
+                    hook_end = Box{h_width, h_height, sf::Color::Green, groundBody};
+
+                    // --------------------------------------------------------------
 
                     // joint
                     hook_joint_def.Initialize(body, hook_end.body, body->GetWorldCenter(), hook_end.body->GetWorldCenter());
@@ -267,7 +294,7 @@ void Player::use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec)
                     float distance = sqrt(value);
 
                     hook_joint = (b2DistanceJoint *)world->CreateJoint(&hook_joint_def);
-                    hook_joint->SetMinLength(0.f);
+                    hook_joint->SetMinLength(1.f);
                     hook_joint->SetLength(distance);
                     hook_joint->SetMaxLength(distance);
 

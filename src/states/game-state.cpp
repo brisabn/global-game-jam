@@ -85,7 +85,7 @@ void GameState::update(float delta_time)
     world->Step(delta_time * 2, 6, 2);
 
     // update player (used in movement states)
-    player->update_player_state(*window);
+    player->update_player_state(*window, view);
 
     // set camera position relative to the player
     int camera_x = SCREEN_WIDTH / 2;
@@ -93,7 +93,6 @@ void GameState::update(float delta_time)
 
     if (camera_y > SCREEN_HEIGHT / 2)
     {
-        std::cout << camera_y << std::endl;
         camera_y = SCREEN_HEIGHT / 2;
     }
 
@@ -137,6 +136,11 @@ void GameState::init_boxes()
     boxes.push_back(create_ground(world, 212, 117, 63, 60, sf::Color::White, false));
 
     // hooks
-    hook_boxes.push_back(create_ground(world, 708, 270, 40, 40, sf::Color::Green, true));
-    hook_boxes.push_back(create_ground(world, 330, 176, 40, 40, sf::Color::Green, true));
+    hook_boxes.push_back(create_ground(world, 720, 275, 40, 40, sf::Color::Yellow, true));
+
+    hook_boxes.push_back(create_ground(world, 720, 100, 40, 40, sf::Color::Yellow, true));
+
+    hook_boxes.push_back(create_ground(world, 330, 176, 40, 40, sf::Color::Yellow, true));
+
+    hook_boxes.push_back(create_ground(world, 330, 50, 40, 40, sf::Color::Yellow, true));
 }
