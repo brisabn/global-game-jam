@@ -58,7 +58,7 @@ void IntroState::update_intro_sequence(float delta_time)
         }
         window->draw(intro_strips[0]);
     }
-    if (this->clock.getElapsedTime().asSeconds() > 1)
+    if (this->clock.getElapsedTime().asSeconds() > 1.5)
     {
         if (b < 255)
         {
@@ -67,7 +67,7 @@ void IntroState::update_intro_sequence(float delta_time)
         }
         window->draw(intro_strips[1]);
     }
-    if (this->clock.getElapsedTime().asSeconds() > 1.5)
+    if (this->clock.getElapsedTime().asSeconds() > 2.5)
     {
         if (c < 255)
         {
@@ -76,10 +76,10 @@ void IntroState::update_intro_sequence(float delta_time)
         }
         window->draw(intro_strips[2]);
     }
-    if (this->clock.getElapsedTime().asSeconds() > 2)
+    if (this->clock.getElapsedTime().asSeconds() > 3.5)
     {
 
-        add_state<GameState>(true);
+        // add_state<GameState>(true);
     }
 }
 
