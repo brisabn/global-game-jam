@@ -3,6 +3,7 @@
 #include "definitions.hpp"
 #include "states/splash-state.hpp"
 #include "states/game-state.hpp"
+#include "states/animation-demo-state.hpp"
 #include "box2d/box2d.h"
 
 int main()

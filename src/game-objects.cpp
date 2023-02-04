@@ -27,9 +27,12 @@ Box create_box(b2World *world, float x, float y, float width, float height, floa
 
 Box create_ground(b2World *world, float x, float y, float width, float height, sf::Color color, bool is_sensor)
 {
+    int b2d_x = x + width / 2;
+    int b2d_y = SCREEN_HEIGHT - y - height / 2;
+
     // Static body definition
     b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(x / PPM, y / PPM);
+    groundBodyDef.position.Set(b2d_x / PPM, b2d_y / PPM);
 
     // Shape definition
     b2PolygonShape groundBox;
