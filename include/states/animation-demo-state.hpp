@@ -10,12 +10,14 @@
 #define ANIMATION_DEMO_STATE_HPP
 
 #include "engine/include/generic-state.hpp"
+#include "engine/include/animation.hpp"
 #include "states/game-state.hpp"
 #include "definitions.hpp"
 
 class AnimationDemoState : public pte::GenericState
 {
 private:
+    pte::Animation *animation;
 
 public:
     using GenericState::GenericState;

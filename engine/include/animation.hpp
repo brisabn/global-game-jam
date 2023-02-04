@@ -12,10 +12,14 @@ namespace pte
         sf::Texture spritesheet_texture;
         std::vector<sf::Sprite> sprites;
 
+        int current_sprite = 0;
+        float time_since_last_frame = 0.0f;
+        float frame_interval = 0.1f;
+
     public:
-        Animation(std::string filepath);
+        Animation(std::string filepath, int width, int height, float frame_interval);
+        void update_animation(float delta_time);
         sf::Sprite *get_sprite();
-        void update_animation(float delta_time, int width, int height);
     };
 }
 
