@@ -28,7 +28,7 @@ struct Box
 };
 
 Box create_box(b2World *world, float x, float y, float width, float height, float density, float friction, sf::Color color);
-Box create_ground(b2World *world, float x, float y, float width, float height, sf::Color color);
+Box create_ground(b2World *world, float x, float y, float width, float height, sf::Color color, bool is_sensor);
 
 void render_box(sf::RenderWindow &w, Box &boxes);
 void render_box_vector(sf::RenderWindow &w, std::vector<Box> &boxes);
