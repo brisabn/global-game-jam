@@ -34,4 +34,10 @@
 // defaults
 #define DEFAULT_FONT_PATH "resources/fonts/VT323.ttf"
 
+// credits
+#define CREDITS_BACKGROUND_FILEPATH "resources/main-menu.png"
+#define CREDITS_TITLE_FILEPATH "resources/main-menu.png"
+#define CREDITS_PLAY_BUTTON "resources/main-menu/play_btn.png"
+#define CREDITS_QUIT_BUTTON "resources/main-menu/quit_btn.png"
+
 #endif
