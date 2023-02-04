@@ -53,7 +53,7 @@ void GameState::handle_input()
     // grappling hook
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        player->use_hook(*window);
+        player->use_hook(*window, hook_boxes);
     }
 
     // if exists some joint, it's definitely the hook joint! (gambiarra)
@@ -68,7 +68,6 @@ void GameState::handle_input()
             player->decrease_hook_length();
         }
     }
-
 }
 
 void GameState::update(float delta_time)
@@ -78,7 +77,6 @@ void GameState::update(float delta_time)
 
     // update player (used in movement states)
     player->update_player_state(*window);
-
 }
 
 void GameState::draw(float delta_time)
@@ -86,6 +84,7 @@ void GameState::draw(float delta_time)
     window->clear(sf::Color(56, 42, 55));
 
     render_box_vector(*window, boxes);
+    render_box_vector(*window, hook_boxes);
 
     player->render_player(*window);
     player->render_player_aim(*window);
@@ -99,12 +98,10 @@ void GameState::draw(float delta_time)
 
 void GameState::init_boxes()
 {
-    Box b1 = create_ground(world, (SCREEN_WIDTH / 2) - 300, 0 + 100 / 2, 300, 100, sf::Color::White);
-    boxes.push_back(b1);
+    boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2) - 300, 0 + 100 / 2, 300, 100, sf::Color::White, false));
+    boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2) + 300, 0 + 100 / 2, 300, 100, sf::Color::White, false));
+    boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2), 350, 300, 80, sf::Color::White, false));
 
-    Box b2 = create_ground(world, (SCREEN_WIDTH / 2) + 300, 0 + 100 / 2, 300, 100, sf::Color::White);
-    boxes.push_back(b2);
-
-    Box b3 = create_ground(world, (SCREEN_WIDTH / 2), 350, 300, 80, sf::Color::White);
-    boxes.push_back(b3);
+    hook_boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2), 321, 280, 30, sf::Color::Red, true));
+    hook_boxes.push_back(create_ground(world, (SCREEN_WIDTH / 2) + 300, 0 + 600 / 2, 40, 40, sf::Color::Red, true));
 }
