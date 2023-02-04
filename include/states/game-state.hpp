@@ -30,6 +30,7 @@ private:
 
     // simulation
     std::vector<Box> boxes;
+    std::vector<Box> hook_boxes;
     Player *player;
     
 

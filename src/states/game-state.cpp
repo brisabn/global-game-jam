@@ -53,7 +53,7 @@ void GameState::handle_input()
     // grappling hook
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        player->use_hook(*window);
+        player->use_hook(*window, hook_boxes);
     }
 
     // if exists some joint, it's definitely the hook joint! (gambiarra)
@@ -84,6 +84,7 @@ void GameState::draw(float delta_time)
     window->clear(sf::Color(56, 42, 55));
 
     render_box_vector(*window, boxes);
+    render_box_vector(*window, hook_boxes);
 
     player->render_player(*window);
     player->render_player_aim(*window);
@@ -97,13 +98,13 @@ void GameState::draw(float delta_time)
 
 void GameState::init_boxes()
 {
-    boxes.push_back(create_ground(world, 162, 480, 700, 120, sf::Color::White));
-    boxes.push_back(create_ground(world, 812, -900, 50, 1500, sf::Color::White));
-    boxes.push_back(create_ground(world, 162, -940, 50, 1300, sf::Color::White));
+    boxes.push_back(create_ground(world, 162, 480, 700, 120, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 812, -900, 50, 1500, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 162, -940, 50, 1300, sf::Color::White, false));
 
     // objetos
-    boxes.push_back(create_ground(world, 350, 430, 100, 50, sf::Color::White));
-    boxes.push_back(create_ground(world, 583, 410, 230, 70, sf::Color::White));
-    boxes.push_back(create_ground(world, 708, 270, 40, 40, sf::Color::Green));
-    boxes.push_back(create_ground(world, 420, 235, 192, 59, sf::Color::White));
+    boxes.push_back(create_ground(world, 350, 430, 100, 50, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 583, 410, 230, 70, sf::Color::White, false));
+    hook_boxes.push_back(create_ground(world, 708, 270, 40, 40, sf::Color::Green, true));
+    boxes.push_back(create_ground(world, 420, 235, 192, 59, sf::Color::White, false));
 }
