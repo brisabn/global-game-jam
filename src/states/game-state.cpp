@@ -21,6 +21,16 @@ void GameState::init()
     view.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
     view.setCenter(sf::Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
     default_view = view;
+
+    // load texture
+    if (!box_texture.loadFromFile("resources/block_texture.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
+    if (!roots_texture.loadFromFile("resources/small_roots_texture.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
 }
 
 void GameState::handle_input()
@@ -102,13 +112,13 @@ void GameState::update(float delta_time)
 
 void GameState::draw(float delta_time)
 {
-    window->clear(sf::Color(56, 42, 55));
+    window->clear(sf::Color(84, 69, 65));
 
     // set camera
     window->setView(view);
 
-    render_box_vector(*window, boxes);
-    render_box_vector(*window, hook_boxes);
+    render_box_vector(*window, boxes, box_texture);
+    render_box_vector(*window, hook_boxes, roots_texture);
 
     player->render_player(*window);
     player->render_player_aim(*window);

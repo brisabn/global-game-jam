@@ -36,6 +36,10 @@ private:
     // camera
     sf::View view;
     sf::View default_view;
+
+    // textures
+    sf::Texture box_texture;
+    sf::Texture roots_texture;
     
 
 public:
