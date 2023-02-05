@@ -12,10 +12,8 @@ void GameState::init()
     world = new b2World(b2Vec2(0, -9));
 
     // create player
-    player = new Player(world, 500, 2000, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
+    player = new Player(world, 200, 180, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
     // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
-
-    // player y: 180
 
     // all boxes in this level
     init_boxes();
@@ -35,14 +33,15 @@ void GameState::init()
     {
         std::cerr << "error loading texture" << std::endl;
     }
-    // if (!end_texture.loadFromFile("resources/level_end.png"))
-    // {
-    //     std::cerr << "error loading texture" << std::endl;
-    // }
+    if (!end_texture.loadFromFile("resources/end_level.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
 
     // goal position
     end_sprite.setTexture(end_texture);
-    end_sprite.setPosition(sf::Vector2f(650, -1100));
+    end_sprite.setPosition(sf::Vector2f(650, -1050));
+    end_sprite.setScale(sf::Vector2f(0.15, 0.15));
 }
 
 void GameState::handle_input()
@@ -121,14 +120,10 @@ void GameState::update(float delta_time)
     }
 
     // verify goal
-    // sf::Sprite aa;
-    // aa.setPosition(sf::Vector2f(player->body->GetPosition().x * PPM, SCREEN_HEIGHT - player->body->GetPosition().y * PPM));
-
-    // if (aa.getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
-    // {
-    //     std::cout << "aaaa" << std::endl;
-    //     window->close();
-    // }
+    if (player->animations[player->action]->get_sprite()->getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
+    {
+        window->close();
+    }
 
     view.setCenter(camera_x, camera_y);
 }

@@ -65,7 +65,6 @@ private:
     b2World *world;
 
     // player animations
-    player_action action;
     player_action previous_action;
 
 public:
@@ -74,6 +73,7 @@ public:
     float height;
     b2BodyDef body_def;
     b2Body *body;
+    player_action action;
 
     sf::RectangleShape shape;
     sf::Color color;
