@@ -75,19 +75,22 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
     animations.push_back(new pte::Animation("resources/yuca/yuca_idle.png", 500 / 7, 650 / 7, 7, 30, 30, 0.2f));
 
     // running left animation (position 1)
-    animations.push_back(new pte::Animation("resources/spritesheet2.png", 30, 44, 6, 0, 0, 0.5f));
+    animations.push_back(new pte::Animation("resources/yuca/yuca_right.png", 500 / 7, 650 / 7, 12, 30, 30, 0.1f));
 
     // running right animation (position 2)
-    animations.push_back(new pte::Animation("resources/spritesheet3.png", 30, 44, 6, 0, 0, 0.5f));
+    animations.push_back(new pte::Animation("resources/yuca/yuca_left.png", 500 / 7, 650 / 7, 12, 30, 30, 0.05f));
 
     // jump animation (position 3)
-    animations.push_back(new pte::Animation("resources/spritesheet4.png", 30, 44, 6, 0, 0, 0.5f));
+    animations.push_back(new pte::Animation("resources/yuca/yuca_jump.png", 500 / 7, 650 /7, 5, 0, 0, 0.2f));
 
     // hook animation (position 4)
     animations.push_back(new pte::Animation("resources/yuca/yuca_hook.png", 500 / 7, 650 / 7, 6, 0, 0, 0.25f));
 
     // glide animation (position 5)
     animations.push_back(new pte::Animation("resources/yuca/yuca_glide.png", 500 / 7, 650 / 7, 8, 0, 0, 0.2f));
+
+    // falling animation (position 6)
+    animations.push_back(new pte::Animation("resources/yuca/yuca_falling.png", 500 / 7, 650 / 7, 11, 0, 0, 0.1f));
 
     // load hook sprite
     if (!hook_texture.loadFromFile("resources/hook.png"))
@@ -439,7 +442,14 @@ void Player::update_player_animation(float delta_time)
     else if (!player_on_ground && !in_action_glide && !hook_end_attached)
     {
         previous_action = action;
-        action = jump;
+        if(body->GetLinearVelocity().y > 1)
+        {
+            action = jump;
+        }
+        else
+        {
+            action = falling;
+        }
     }
 
     if (action != previous_action)

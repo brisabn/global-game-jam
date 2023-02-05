@@ -36,6 +36,7 @@ enum player_action
     jump,
     hook,
     glide,
+    falling,
 };
 
 // everything related to player
