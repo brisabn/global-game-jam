@@ -50,6 +50,7 @@ private:
     // hook
     b2DistanceJointDef hook_joint_def;
     b2DistanceJoint *hook_joint;
+    sf::Texture hook_texture;
 
     bool hook_end_attached;
     bool player_on_ground;

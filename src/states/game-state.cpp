@@ -122,9 +122,9 @@ void GameState::draw(float delta_time)
     render_box_vector(*window, boxes, box_texture);
     render_box_vector(*window, hook_boxes, roots_texture);
 
+    player->render_hook(*window);
     player->render_player(*window);
     // player->render_player_aim(*window);
-    player->render_hook(*window);
 
     // set default view
     window->setView(default_view);

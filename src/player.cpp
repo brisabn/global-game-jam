@@ -88,16 +88,17 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
 
     // glide animation (position 5)
     animations.push_back(new pte::Animation("resources/spritesheet6.png", 30, 44, 0.5f));
+
+    // load hook sprite
+    if (!hook_texture.loadFromFile("resources/hook.png"))
+        ;
+    {
+        std::cerr << "Failed to load hook sprite" << std::endl;
+    }
 }
 
 void Player::render_player(sf::RenderWindow &window)
 {
-    //     shape.setPosition(body->GetPosition().x * PPM, SCREEN_HEIGHT - (body->GetPosition().y * PPM));
-    //     shape.setOrigin(width / 2, height / 2);
-    //     shape.setSize(sf::Vector2f(width, height));
-    //     shape.setRotation(-1 * body->GetAngle() * DEG_PER_RAD);
-    //     shape.setFillColor(color);
-    //     window.draw(shape);
 
     sf::Sprite *frame_sprite = animations[action]->get_sprite();
 
@@ -111,14 +112,13 @@ void Player::render_player(sf::RenderWindow &window)
     // // while in Box2D, "position" refers to the body's center
     frame_sprite->setOrigin(width / 2, height / 2);
 
-    // // Set the size of the sprite's texture rectangle
-    // frame_sprite->setScale(width / frame_sprite->getTexture()->getSize().x, height / frame_sprite->getTexture()->getSize().y);
-
-    // // For the sprite to be rotated in the correct direction, we have to multiply by -1
-    // sprite.setRotation(-1 * box.body->GetAngle() * DEG_PER_RAD);
-
     // window->draw(frame_sprite);
     window.draw(*frame_sprite);
+
+    if (hook_end_attached)
+    {
+        render_player_aim(window);
+    }
 }
 
 void Player::render_player_aim(sf::RenderWindow &window)
@@ -353,22 +353,36 @@ void Player::render_hook(sf::RenderWindow &window)
 {
     if (hook_end_attached)
     {
-        // render hook box
-        sf::RectangleShape hook;
-        hook.setPosition(hook_end.body->GetPosition().x * PPM, SCREEN_HEIGHT - (hook_end.body->GetPosition().y * PPM));
-        hook.setOrigin(hook_end.width / 2, hook_end.height / 2);
-        hook.setSize(sf::Vector2f(hook_end.width, hook_end.height));
-        hook.setRotation(-1 * hook_end.body->GetAngle() * DEG_PER_RAD);
-        hook.setFillColor(hook_end.color);
-        window.draw(hook);
+        // draw hook sprite !!
+        sf::Sprite sprite;
+        sprite.setTexture(hook_texture);
 
-        // render line
-        sf::VertexArray line(sf::Lines, 2);
-        line[0].position = sf::Vector2f(body->GetPosition().x * PPM, SCREEN_HEIGHT - body->GetPosition().y * PPM);
-        line[1].position = sf::Vector2f(hook_end.body->GetPosition().x * PPM, SCREEN_HEIGHT - hook_end.body->GetPosition().y * PPM);
-        line[0].color = sf::Color::Red;
-        line[1].color = sf::Color::Red;
-        window.draw(line);
+        sf::Vector2f point_a = sf::Vector2f(body->GetPosition().x * PPM, SCREEN_HEIGHT - body->GetPosition().y * PPM);
+        sf::Vector2f point_b = sf::Vector2f(hook_end.body->GetPosition().x * PPM, SCREEN_HEIGHT - hook_end.body->GetPosition().y * PPM);
+
+        // Set the position of the sprite based on the two points
+        sf::Vector2f topPoint(point_b.x, point_b.y);
+        sf::Vector2f bottomPoint(point_a.x, point_a.y);
+        // sf::Vector2f centerPoint = (topPoint + bottomPoint) / 2.f;
+        sprite.setPosition(sf::Vector2f(topPoint.x, topPoint.y));
+        sprite.setOrigin(30, 30);
+
+        // Set the rotation of the sprite
+        float angle = std::atan2(bottomPoint.y - topPoint.y, bottomPoint.x - topPoint.x) * 180.f / 3.14159265f;
+        sprite.setRotation(angle);
+
+        // Set the scale of the sprite
+        float width = hook_texture.getSize().x * 0.3;
+        float height = hook_texture.getSize().y * 0.3;
+        sprite.setScale(width / hook_texture.getSize().x, height / hook_texture.getSize().y);
+
+        float distance = std::sqrt((topPoint.x - bottomPoint.x) * (topPoint.x - bottomPoint.x) +
+                                   (topPoint.y - bottomPoint.y) * (topPoint.y - bottomPoint.y));
+
+        sprite.setTextureRect(sf::IntRect(0, 0, distance * 3.33, 50));
+
+        // Draw the sprite
+        window.draw(sprite);
     }
 }
 
@@ -408,7 +422,7 @@ void Player::update_player_animation(float delta_time)
         previous_action = action;
         action = idle;
     }
-    //player running right
+    // player running right
     else if (player_on_ground && body->GetLinearVelocity().x < 0)
     {
         previous_action = action;
