@@ -12,7 +12,7 @@ void Level2::init()
     world = new b2World(b2Vec2(0, -9));
 
     // create player
-    player = new Player(world, 210, 180, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
+    player = new Player(world, 410, 1980, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
     // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
 
     // all boxes in this level
@@ -46,24 +46,42 @@ void Level2::init()
     {
         std::cerr << "error loading texture" << std::endl;
     }
-    if (!end_texture.loadFromFile("resources/end_level.png"))
+    if (!end_texture.loadFromFile("resources/door.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
+    if (!door_texture.loadFromFile("resources/door.png"))
     {
         std::cerr << "error loading texture" << std::endl;
     }
 
     // goal position
     end_sprite.setTexture(end_texture);
-    end_sprite.setPosition(sf::Vector2f(650, -1300));
-    end_sprite.setScale(sf::Vector2f(0.15, 0.15));
+    end_sprite.setPosition(sf::Vector2f(650, -1295));
+    end_sprite.setScale(sf::Vector2f(0.3, 0.5));
+
+    // door
+    door_sprite.setTexture(door_texture);
+    door_sprite.setPosition(sf::Vector2f(180, 383));
+    door_sprite.setScale(sf::Vector2f(0.3, 0.5));
 
     // audio
-    audio = new Audio();
-    audio->define_sound("resources/music/soundtrack/ato_3_novo.ogg", 100);
-    audio->play_sound();
+    music = new Audio();
+    music->define_sound("resources/music/soundtrack/ato_3_novo.ogg", 100);
+    music->play_sound();
+    music_on = true;
 }
 
 void Level2::handle_input()
 {
+    // check for music and pause
+    if (music_on == false)
+    {
+        std::cout << "false" << std::endl;
+        music->music.play();
+        music_on = true;
+    }
+
     sf::Event event;
 
     while (window->pollEvent(event))
@@ -75,34 +93,13 @@ void Level2::handle_input()
 
         if (input->is_sprite_clicked(this->pause_button, sf::Mouse::Left, *window))
         {
-            // PAUSE
+            // pause game
+            music->music.pause();
+            
+            music_on = false;
             add_state<PauseState>(false);
         }
     }
-
-    // // player movement
-    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-    // {
-    //     player->move_player_left();
-    // }
-    // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-    // {
-    //     player->move_player_right();
-    // }
-    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    // {
-    //     player->action_glide();
-    // }
-    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-    // {
-    //     player->action_jump();
-    // }
-
-    // // grappling hook
-    // if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-    // {
-    //     player->use_hook(*window, hook_boxes);
-    // }
 
     // player movement (jump have priority)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
@@ -163,7 +160,7 @@ void Level2::update(float delta_time)
     // verify goal
     if (player->animations[player->action]->get_sprite()->getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
     {
-        delete audio;
+        delete music;
         add_state<MainCreditsState>(true);
     }
 
@@ -183,9 +180,11 @@ void Level2::draw(float delta_time)
     render_box_vector(*window, boxes, box_texture);
     render_box_vector(*window, hook_boxes, roots_texture);
 
+    // doors
+    window->draw(end_sprite);
+    window->draw(door_sprite);
+
     player->render_player(*window);
-    // player->render_player_aim(*window);
-    // player->render_hook(*window);
 
     window->draw(end_sprite);
 

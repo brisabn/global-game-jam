@@ -81,7 +81,7 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
     animations.push_back(new pte::Animation("resources/yuca/yuca_left.png", 500 / 7, 650 / 7, 12, 30, 30, 0.05f));
 
     // jump animation (position 3)
-    animations.push_back(new pte::Animation("resources/yuca/yuca_jump.png", 500 / 7, 650 /7, 5, 0, 0, 0.2f));
+    animations.push_back(new pte::Animation("resources/yuca/yuca_jump.png", 500 / 7, 650 / 7, 5, 0, 0, 0.2f));
 
     // hook animation (position 4)
     animations.push_back(new pte::Animation("resources/yuca/yuca_hook.png", 500 / 7, 650 / 7, 6, 0, 0, 0.25f));
@@ -103,6 +103,13 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
     {
         std::cerr << "Failed to load player aim sprite" << std::endl;
     }
+
+    // load audio
+    walking_audio.define_sound("resources/music/sfx/walking.ogg", 85);
+    jump_audio.define_sound("resources/music/sfx/jump.ogg", 85);
+    hook_hit_audio.define_sound("resources/music/sfx/hook_hit.ogg", 50);
+    hit_ground_audio.define_sound("resources/music/sfx/hit_ground.ogg", 80);
+    // glide_audio.define_sound("resources/music/sfx/glide.ogg", 50);
 }
 
 void Player::render_player(sf::RenderWindow &window)
@@ -114,19 +121,6 @@ void Player::render_player(sf::RenderWindow &window)
     // // because SFML uses OpenGL coordinate system where X is right, Y is down
     // // while Box2D uses traditional X is right, Y is up
     frame_sprite->setPosition(body->GetPosition().x * PPM, SCREEN_HEIGHT - (body->GetPosition().y * PPM));
-
-    // // We also need to set our drawable's origin to its center
-    // // because in SFML, "position" refers to the upper left corner
-    // // while in Box2D, "position" refers to the body's center
-    // frame_sprite->setOrigin(width / 2, height / 2);
-
-    // sf::RectangleShape shape;
-    // shape.setPosition(body->GetPosition().x * PPM, SCREEN_HEIGHT - (body->GetPosition().y * PPM));
-    // shape.setOrigin(width / 2, height / 2);
-    // shape.setSize(sf::Vector2f(width, height));
-    // shape.setRotation(-1 * body->GetAngle() * DEG_PER_RAD);
-    // shape.setFillColor(color);
-    // window.draw(shape);
 
     // window->draw(frame_sprite);
     window.draw(*frame_sprite);
@@ -152,6 +146,9 @@ void Player::render_player_aim(sf::RenderWindow &window)
 
 void Player::move_player_left()
 {
+    if (player_on_ground)
+        walking_audio.play_sound();
+
     if (body->GetLinearVelocity().x >= -PLAYER_MAX_LINEAR_VELOCITY)
     {
         body->ApplyLinearImpulseToCenter(b2Vec2(-18, 0), true);
@@ -164,6 +161,9 @@ void Player::move_player_left()
 
 void Player::move_player_right()
 {
+    if (player_on_ground)
+        walking_audio.play_sound();
+
     if (body->GetLinearVelocity().x <= PLAYER_MAX_LINEAR_VELOCITY)
     {
         body->ApplyLinearImpulseToCenter(b2Vec2(18, 0), true);
@@ -176,6 +176,9 @@ void Player::move_player_right()
 
 void Player::action_jump()
 {
+    if (player_on_ground || hook_end_attached)
+        jump_audio.play_sound();
+
     if (hook_end_attached && !is_hook_impulse_applied)
     {
         // std::cout << aim_angle << std::endl;
@@ -200,6 +203,7 @@ void Player::action_glide()
     if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached && !player_on_ground)
     {
         in_action_glide = true;
+        // glide_audio.play_sound();
         body->SetGravityScale(0.2f);
         body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, 0));
         body->ApplyLinearImpulseToCenter(b2Vec2(0, 80), true);
@@ -224,6 +228,9 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
                     // The second body is below the first body
                     player_on_ground = true;
                     color = sf::Color::Blue;
+
+                    // play hit ground sound
+                    hit_ground_audio.play_sound();
 
                     if (in_action_glide)
                     {
@@ -309,6 +316,10 @@ void Player::use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec)
             {
                 if (b.body == callback.m_closestBody)
                 {
+                    // play hook sound
+                    hook_hit_audio.play_sound();
+                    
+
                     b2Vec2 closestPoint = callback.m_closestPoint;
 
                     // -------------------- create new hook body --------------------
@@ -454,7 +465,7 @@ void Player::update_player_animation(float delta_time)
     else if (!player_on_ground && !in_action_glide && !hook_end_attached)
     {
         previous_action = action;
-        if(body->GetLinearVelocity().y > 1)
+        if (body->GetLinearVelocity().y > 1)
         {
             action = jump;
         }

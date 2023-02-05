@@ -17,11 +17,11 @@
 
 class TutorialState : public pte::GenericState
 {
+private:
+    sf::Sprite background;
 
 public:
     using GenericState::GenericState;
-
-    sf::Sprite resume_button;
 
     void init();
     void handle_input();

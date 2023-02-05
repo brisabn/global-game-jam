@@ -15,9 +15,7 @@ void MainMenuState::init()
     this->quit_button.setScale(0.35, 0.35);
     this->quit_button.setPosition((SCREEN_WIDTH / 2) + (this->quit_button.getGlobalBounds().width / 2) * 2.5f, (SCREEN_HEIGHT / 2) + this->quit_button.getGlobalBounds().height * (3.f));
 
-    // window->setSize(sf::Vector2u(SCREEN_WIDTH * 1.5, SCREEN_HEIGHT * 1.5));
     // credits button
-
     assets->load_texture("credits_button", MAIN_MENU_CREDITS_BUTTON);
     this->credits_button.setTexture(assets->get_texture("credits_button"));
     this->credits_button.setScale(0.35, 0.35);
@@ -31,12 +29,21 @@ void MainMenuState::init()
 
     // audio
     menu_music = new Audio();
-    menu_music->define_sound("resources/music/soundtrack/ato_1_novo.ogg", 100);
-    menu_music->play_sound();
+    menu_music->define_music("resources/music/soundtrack/ato_1_novo.ogg", 100);
+    menu_music->play_music();
+    music_on = true;
 }
 
 void MainMenuState::handle_input()
 {
+    // check for music and pause
+    if (music_on == false)
+    {
+        std::cout << "false" << std::endl;
+        menu_music->music.play();
+        music_on = true;
+    }
+
     sf::Event event;
 
     while (window->pollEvent(event))
@@ -44,29 +51,24 @@ void MainMenuState::handle_input()
         if (sf::Event::Closed == event.type || input->is_sprite_clicked(this->quit_button, sf::Mouse::Left, *window))
         {
             window->close();
-            
         }
-
-        // if (sf::Event::KeyPressed)
 
         if (input->is_sprite_clicked(this->play_button, sf::Mouse::Left, *window))
         {
-            // Switch to game state
-
-            // menu_music->music.pause();
-            menu_music->sound.pause();
-
+            // Stop music
+            menu_music->music.stop();
             delete menu_music;
-            add_state<TutorialState>(true);
 
+            // Switch to tutorial state
+            add_state<TutorialState>(true);
         }
         if (input->is_sprite_clicked(this->credits_button, sf::Mouse::Left, *window))
         {
-            // Remove The Menu State Off The Stack
-            remove_state();
+            // Switch to main credits
+            menu_music->music.pause();
 
-            // Switch To Main Credits State By Replacing The Game State
-            add_state<MainCreditsState>(true);
+            music_on = false;
+            add_state<MainCreditsState>(false);
         }
     }
 }

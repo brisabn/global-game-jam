@@ -2,7 +2,7 @@
  * @file menu-state.hpp
  * @date 2023-01-06
  *
- * @brief Example game menu state.
+ * @brief Game menu state.
  *
  */
 
@@ -27,6 +27,7 @@ private:
     sf::Text title;
     sf::Sprite background;
     Audio *menu_music;
+    bool music_on;
 
 public:
     using GenericState::GenericState;
