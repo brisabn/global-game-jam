@@ -75,19 +75,22 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
     animations.push_back(new pte::Animation("resources/yuca/yuca_idle.png", 500 / 7, 650 / 7, 7, 30, 30, 0.2f));
 
     // running left animation (position 1)
-    animations.push_back(new pte::Animation("resources/spritesheet2.png", 30, 44, 6, 0, 0, 0.5f));
+    animations.push_back(new pte::Animation("resources/yuca/yuca_right.png", 500 / 7, 650 / 7, 12, 30, 30, 0.1f));
 
     // running right animation (position 2)
-    animations.push_back(new pte::Animation("resources/spritesheet3.png", 30, 44, 6, 0, 0, 0.5f));
+    animations.push_back(new pte::Animation("resources/yuca/yuca_left.png", 500 / 7, 650 / 7, 12, 30, 30, 0.05f));
 
     // jump animation (position 3)
-    animations.push_back(new pte::Animation("resources/spritesheet4.png", 30, 44, 6, 0, 0, 0.5f));
+    animations.push_back(new pte::Animation("resources/yuca/yuca_jump.png", 500 / 7, 650 /7, 5, 0, 0, 0.2f));
 
     // hook animation (position 4)
     animations.push_back(new pte::Animation("resources/yuca/yuca_hook.png", 500 / 7, 650 / 7, 6, 0, 0, 0.25f));
 
     // glide animation (position 5)
     animations.push_back(new pte::Animation("resources/yuca/yuca_glide.png", 500 / 7, 650 / 7, 8, 0, 0, 0.2f));
+
+    // falling animation (position 6)
+    animations.push_back(new pte::Animation("resources/yuca/yuca_falling.png", 500 / 7, 650 / 7, 11, 0, 0, 0.1f));
 
     // load hook sprite
     if (!hook_texture.loadFromFile("resources/hook.png"))
@@ -151,7 +154,11 @@ void Player::move_player_left()
 {
     if (body->GetLinearVelocity().x >= -PLAYER_MAX_LINEAR_VELOCITY)
     {
-        body->ApplyLinearImpulseToCenter(b2Vec2(-30, 0), true);
+        body->ApplyLinearImpulseToCenter(b2Vec2(-18, 0), true);
+    }
+    if (!player_on_ground && !in_action_glide && !hook_end_attached)
+    {
+        body->ApplyLinearImpulseToCenter(b2Vec2(16, 0), true);
     }
 }
 
@@ -159,7 +166,11 @@ void Player::move_player_right()
 {
     if (body->GetLinearVelocity().x <= PLAYER_MAX_LINEAR_VELOCITY)
     {
-        body->ApplyLinearImpulseToCenter(b2Vec2(30, 0), true);
+        body->ApplyLinearImpulseToCenter(b2Vec2(18, 0), true);
+    }
+    if (!player_on_ground && !in_action_glide && !hook_end_attached)
+    {
+        body->ApplyLinearImpulseToCenter(b2Vec2(-16, 0), true);
     }
 }
 
@@ -180,7 +191,7 @@ void Player::action_jump()
         body->ApplyLinearImpulseToCenter(b2Vec2(0, 200), true); // AQUI É ONDE MUDA MESMO O PULO
         // in_action_jump = true;
 
-        color = sf::Color::Cyan;
+        color = sf::Color::Green;
     }
 }
 
@@ -192,7 +203,7 @@ void Player::action_glide()
         body->SetGravityScale(0.2f);
         body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, 0));
         body->ApplyLinearImpulseToCenter(b2Vec2(0, 80), true);
-        color = sf::Color::Yellow;
+        // color = sf::Color::Yellow;
     }
 }
 
@@ -212,7 +223,7 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
                 {
                     // The second body is below the first body
                     player_on_ground = true;
-                    color = sf::Color::Magenta;
+                    color = sf::Color::Blue;
 
                     if (in_action_glide)
                     {
@@ -226,6 +237,7 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
                 {
                     // The second body is not below the first body
                     player_on_ground = false;
+                    color = sf::Color::Green;
                 }
             }
             else
@@ -243,14 +255,17 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
     // get mouse positions relative to the view
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
     sf::Vector2f world_pos = window.mapPixelToCoords(mouse_pos, view);
-    int end_x = world_pos.x;
-    int end_y = SCREEN_HEIGHT - world_pos.y;
-
+    int end_x, end_y;
     // use the hook end instead if attached
     if (hook_end_attached)
     {
         end_x = hook_end.body->GetPosition().x * PPM;
         end_y = hook_end.body->GetPosition().y * PPM;
+    }
+    else
+    {
+        end_x = world_pos.x;
+        end_y = SCREEN_HEIGHT - world_pos.y;
     }
 
     b2Vec2 player_pos = body->GetPosition();
@@ -277,7 +292,7 @@ void Player::use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec)
         {
             in_action_glide = false;
             body->SetGravityScale(original_gravity_scale);
-            color = sf::Color::Cyan;
+            // color = sf::Color::Cyan;
         }
         int hook_range = 5;
 
@@ -439,7 +454,14 @@ void Player::update_player_animation(float delta_time)
     else if (!player_on_ground && !in_action_glide && !hook_end_attached)
     {
         previous_action = action;
-        action = jump;
+        if(body->GetLinearVelocity().y > 1)
+        {
+            action = jump;
+        }
+        else
+        {
+            action = falling;
+        }
     }
 
     if (action != previous_action)
