@@ -87,7 +87,11 @@ void Player::move_player_left()
 {
     if (body->GetLinearVelocity().x >= -PLAYER_MAX_LINEAR_VELOCITY)
     {
-        body->ApplyLinearImpulseToCenter(b2Vec2(-30, 0), true);
+        body->ApplyLinearImpulseToCenter(b2Vec2(-18, 0), true);
+    }
+    if (!player_on_ground && !in_action_glide && !hook_end_attached)
+    {
+        body->ApplyLinearImpulseToCenter(b2Vec2(14, 0), true);
     }
 }
 
@@ -95,7 +99,11 @@ void Player::move_player_right()
 {
     if (body->GetLinearVelocity().x <= PLAYER_MAX_LINEAR_VELOCITY)
     {
-        body->ApplyLinearImpulseToCenter(b2Vec2(30, 0), true);
+        body->ApplyLinearImpulseToCenter(b2Vec2(18, 0), true);
+    }
+    if (!player_on_ground && !in_action_glide && !hook_end_attached)
+    {
+        body->ApplyLinearImpulseToCenter(b2Vec2(-14, 0), true);
     }
 }
 
@@ -117,7 +125,8 @@ void Player::action_jump_glide()
         body->ApplyLinearImpulseToCenter(b2Vec2(0, 250), true);
         // in in_action_jump = true;
 
-        color = sf::Color::Cyan;
+        // color = sf::Color::Cyan;
+        color = sf::Color::Green;
     }
     else
     {
@@ -149,7 +158,7 @@ void Player::action_jump()
         body->ApplyLinearImpulseToCenter(b2Vec2(0, 250), true);
         // in in_action_jump = true;
 
-        color = sf::Color::Cyan;
+        color = sf::Color::Green;
     }
 }
 
@@ -161,7 +170,7 @@ void Player::action_glide()
         body->SetGravityScale(0.2f);
         body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, 0));
         body->ApplyLinearImpulseToCenter(b2Vec2(0, 80), true);
-        color = sf::Color::Yellow;
+        // color = sf::Color::Yellow;
     }
 }
 
@@ -181,7 +190,7 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
                 {
                     // The second body is below the first body
                     player_on_ground = true;
-                    color = sf::Color::Magenta;
+                    color = sf::Color::Blue;
 
                     if (in_action_glide)
                     {
@@ -195,6 +204,7 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
                 {
                     // The second body is not below the first body
                     player_on_ground = false;
+                    color = sf::Color::Green;
                 }
             }
             else
@@ -212,14 +222,17 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
     // get mouse positions relative to the view
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
     sf::Vector2f world_pos = window.mapPixelToCoords(mouse_pos, view);
-    int end_x = world_pos.x;
-    int end_y = SCREEN_HEIGHT - world_pos.y;
-
+    int end_x, end_y;
     // use the hook end instead if attached
     if (hook_end_attached)
     {
         end_x = hook_end.body->GetPosition().x * PPM;
         end_y = hook_end.body->GetPosition().y * PPM;
+    }
+    else
+    {
+        end_x = world_pos.x;
+        end_y = SCREEN_HEIGHT - world_pos.y;
     }
 
     b2Vec2 player_pos = body->GetPosition();
@@ -246,7 +259,7 @@ void Player::use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec)
         {
             in_action_glide = false;
             body->SetGravityScale(original_gravity_scale);
-            color = sf::Color::Cyan;
+            // color = sf::Color::Cyan;
         }
         int hook_range = 5;
 

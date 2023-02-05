@@ -13,7 +13,7 @@
 #include "box2d/box2d.h"
 #include "game-objects.hpp"
 
-#define PLAYER_MAX_LINEAR_VELOCITY 5
+#define PLAYER_MAX_LINEAR_VELOCITY 4
 
 // raycast callback. check for closest object
 struct RayCastClosestCallback : public b2RayCastCallback

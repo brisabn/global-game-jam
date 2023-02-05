@@ -37,6 +37,9 @@ private:
     sf::View view;
     sf::View default_view;
 
+    // background
+    sf::Sprite tree1, tree2, background;
+
 public:
     using GenericState::GenericState;
 

@@ -12,7 +12,7 @@ void GameState::init()
     world = new b2World(b2Vec2(0, -9));
 
     // create player
-    player = new Player(world, 200, 180, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
+    player = new Player(world, 200, 180, 34, 44, 45.f, 1.f, sf::Color::Magenta);
     // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
 
     // all boxes in this level
@@ -22,6 +22,20 @@ void GameState::init()
     view.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
     view.setCenter(sf::Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
     default_view = view;
+
+    // background
+    assets->load_texture("background", "resources/background/Ato_1.png");
+    background.setTexture(assets->get_texture("background"));
+    background.setScale(1.1f, 1.1f);
+    background.setPosition((SCREEN_WIDTH - background.getGlobalBounds().width) / 2, (SCREEN_HEIGHT - background.getGlobalBounds().height) / 2);
+
+    assets->load_texture("tree1", "resources/background/Background_1.png");
+    tree1.setTexture(assets->get_texture("tree1"));
+    tree1.setPosition((SCREEN_WIDTH - tree1.getGlobalBounds().width) / 2, (SCREEN_HEIGHT - tree1.getGlobalBounds().height) / 2);
+
+    assets->load_texture("tree2", "resources/background/Background_2.png");
+    tree2.setTexture(assets->get_texture("tree2"));
+    tree2.setPosition((SCREEN_WIDTH - tree2.getGlobalBounds().width) / 2, (SCREEN_HEIGHT - 3 * tree2.getGlobalBounds().height) / 2);
 }
 
 void GameState::handle_input()
@@ -106,6 +120,10 @@ void GameState::draw(float delta_time)
 
     // set camera
     window->setView(view);
+
+    window->draw(this->background);
+    window->draw(this->tree1);
+    window->draw(this->tree2);
 
     render_box_vector(*window, boxes);
     render_box_vector(*window, hook_boxes);
