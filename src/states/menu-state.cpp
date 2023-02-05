@@ -19,6 +19,8 @@ void MainMenuState::init()
     assets->load_texture("quit_button", MAIN_MENU_QUIT_BUTTON);
     this->quit_button.setTexture(assets->get_texture("quit_button"));
     this->quit_button.setPosition((SCREEN_WIDTH / 2) - (this->quit_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->quit_button.getGlobalBounds().height * 2.2);
+
+    // window->setSize(sf::Vector2u(SCREEN_WIDTH * 1.5, SCREEN_HEIGHT * 1.5));
 }
 
 void MainMenuState::handle_input()

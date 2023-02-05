@@ -2,7 +2,7 @@
 
 void AnimationDemoState::init()
 {
-    animation = new pte::Animation("resources/spritesheet.png", 30, 44, 0.3f);
+    animation = new pte::Animation("resources/spritesheet.png", 30, 44, 6, 0, 0, 0.3f);
 }
 
 void AnimationDemoState::handle_input()

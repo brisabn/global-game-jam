@@ -15,12 +15,15 @@ namespace pte
         int current_sprite = 0;
         float time_since_last_frame = 0.0f;
         float frame_interval = 0.1f;
+        bool status = true;
 
     public:
-        Animation(std::string filepath, int width, int height, float frame_interval);
+        Animation(std::string filepath, int width, int height, int frames_qnt, int off_x, int off_y, float frame_interval);
         void update_animation(float delta_time);
         sf::Sprite *get_sprite();
         void reset();
+        void pause();
+        void play();
     };
 }
 

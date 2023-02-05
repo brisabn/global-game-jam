@@ -40,6 +40,8 @@ private:
     // textures
     sf::Texture box_texture;
     sf::Texture roots_texture;
+    sf::Texture end_texture;
+    sf::Sprite end_sprite;
     
 
 public:
