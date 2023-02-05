@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef PTE_GAME_STATE_HPP
-#define PTE_GAME_STATE_HPP
+#ifndef LVL_2_HPP
+#define LVL_2_HPP
 
 #include <cmath>
 #include "engine/include/generic-state.hpp"
@@ -20,7 +20,7 @@
 
 #define PLAYER_STEP 5
 
-class GameState : public pte::GenericState
+class Level2 : public pte::GenericState
 {
 private:
     sf::Sprite pause_button;

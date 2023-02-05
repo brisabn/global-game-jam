@@ -1,8 +1,8 @@
 /**
  * @file definitions.hpp
- * 
+ *
  * @brief General definitions used across the program
- * 
+ *
  */
 
 #ifndef DEFINITIONS_HPP
@@ -33,5 +33,15 @@
 
 // defaults
 #define DEFAULT_FONT_PATH "resources/fonts/VT323.ttf"
+
+// background
+#define BACKGROUND_LV1_LAYER01 "resources/background/Camada_01_Ato1.png"
+#define BACKGROUND_LV1_LAYER02 "resources/background/Camada_02_Ato1.png"
+#define BACKGROUND_LV1_LAYER03 "resources/background/Camada_03_Ato1.png"
+#define BACKGROUND_LV1_LAYER04 "resources/background/Camada_04_Ato1.png"
+#define BACKGROUND_LV1_LAYER05 "resources/background/Camada_05_Ato1.png"
+#define BACKGROUND_LV1_LAYER06 "resources/background/Camada_06_Ato1.png"
+#define BACKGROUND_LV1_LAYER07 "resources/background/Camada_07_Ato1.png"
+#define BACKGROUND_LV1_LAYER08 "resources/background/Camada_08_Ato1.png"
 
 #endif

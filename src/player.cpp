@@ -155,7 +155,7 @@ void Player::action_jump()
 
 void Player::action_glide()
 {
-    if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached && !player_on_ground)
+    if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached)
     {
         in_action_glide = true;
         body->SetGravityScale(0.2f);
