@@ -20,13 +20,11 @@ void MainMenuState::init()
     this->quit_button.setTexture(assets->get_texture("quit_button"));
     this->quit_button.setPosition((SCREEN_WIDTH / 2) - (this->quit_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->quit_button.getGlobalBounds().height * 2.2);
 
-
     // window->setSize(sf::Vector2u(SCREEN_WIDTH * 1.5, SCREEN_HEIGHT * 1.5));
     // credits button
     assets->load_texture("credits_button", MAIN_MENU_PLAY_BUTTON);
     this->credits_button.setTexture(assets->get_texture("play_button"));
     this->credits_button.setPosition((SCREEN_WIDTH / 2) - (this->credits_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->credits_button.getGlobalBounds().height * 3.4);
-
 }
 
 void MainMenuState::handle_input()
@@ -43,16 +41,16 @@ void MainMenuState::handle_input()
         if (input->is_sprite_clicked(this->play_button, sf::Mouse::Left, *window))
         {
             // Switch to game state
-            add_state<GameState>(true);
+            add_state<IntroState>(true);
         }
         if (input->is_sprite_clicked(this->credits_button, sf::Mouse::Left, *window))
-		{
-			// Remove The Menu State Off The Stack
-			remove_state();
+        {
+            // Remove The Menu State Off The Stack
+            remove_state();
 
-			// Switch To Main Credits State By Replacing The Game State
-			add_state<MainCreditsState>(true);
-		}
+            // Switch To Main Credits State By Replacing The Game State
+            add_state<MainCreditsState>(true);
+        }
     }
 }
 
