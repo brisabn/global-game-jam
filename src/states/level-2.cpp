@@ -12,7 +12,7 @@ void Level2::init()
     world = new b2World(b2Vec2(0, -9));
 
     // create player
-    player = new Player(world, 200, 180, 34, 44, 45.f, 1.f, sf::Color::Magenta);
+    player = new Player(world, 400, 2000, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
     // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
 
     // all boxes in this level
@@ -53,7 +53,7 @@ void Level2::init()
 
     // goal position
     end_sprite.setTexture(end_texture);
-    end_sprite.setPosition(sf::Vector2f(650, -1050));
+    end_sprite.setPosition(sf::Vector2f(650, -1300));
     end_sprite.setScale(sf::Vector2f(0.15, 0.15));
 }
 
@@ -75,7 +75,35 @@ void Level2::handle_input()
         }
     }
 
-    // player movement
+    // // player movement
+    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    // {
+    //     player->move_player_left();
+    // }
+    // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    // {
+    //     player->move_player_right();
+    // }
+    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    // {
+    //     player->action_glide();
+    // }
+    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    // {
+    //     player->action_jump();
+    // }
+
+    // // grappling hook
+    // if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    // {
+    //     player->use_hook(*window, hook_boxes);
+    // }
+
+    // player movement (jump have priority)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        player->action_jump();
+    }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         player->move_player_left();
@@ -87,10 +115,6 @@ void Level2::handle_input()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
         player->action_glide();
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-    {
-        player->action_jump();
     }
 
     // grappling hook
@@ -120,6 +144,7 @@ void Level2::update(float delta_time)
 
     // update player (used in movement states)
     player->update_player_state(*window, view);
+    player->update_player_animation(delta_time);
 
     // set camera position relative to the player
     int camera_x = SCREEN_WIDTH / 2;
@@ -128,6 +153,12 @@ void Level2::update(float delta_time)
     if (camera_y > SCREEN_HEIGHT / 2)
     {
         camera_y = SCREEN_HEIGHT / 2;
+    }
+
+    // verify goal
+    if (player->animations[player->action]->get_sprite()->getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
+    {
+        add_state<MainCreditsState>(true);
     }
 
     view.setCenter(camera_x, camera_y);
@@ -147,8 +178,10 @@ void Level2::draw(float delta_time)
     render_box_vector(*window, hook_boxes, roots_texture);
 
     player->render_player(*window);
-    player->render_player_aim(*window);
-    player->render_hook(*window);
+    // player->render_player_aim(*window);
+    // player->render_hook(*window);
+
+    window->draw(end_sprite);
 
     // set default view
     window->setView(default_view);
@@ -161,8 +194,8 @@ void Level2::draw(float delta_time)
 void Level2::init_boxes()
 {
     // paredes
-    boxes.push_back(create_ground(world, 812, -1195, 50, 1795, sf::Color::White, false));
-    boxes.push_back(create_ground(world, 162, -1195, 50, 1555, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 812, -1695, 50, 2295, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 162, -1695, 50, 2055, sf::Color::White, false));
 
     // chão
     boxes.push_back(create_ground(world, 162, 480, 700, 120, sf::Color::White, false));

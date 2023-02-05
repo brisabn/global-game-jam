@@ -12,7 +12,7 @@ void GameState::init()
     world = new b2World(b2Vec2(0, -9));
 
     // create player
-    player = new Player(world, 200, 180, 34, 44, 45.f, 1.f, sf::Color::Magenta);
+    player = new Player(world, 200, 180, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
     // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
 
     // all boxes in this level
@@ -135,7 +135,7 @@ void GameState::update(float delta_time)
     // verify goal
     if (player->animations[player->action]->get_sprite()->getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
     {
-        add_state<MainCreditsState>(true);
+        add_state<Level2>(true);
     }
 
     view.setCenter(camera_x, camera_y);

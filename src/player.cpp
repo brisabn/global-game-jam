@@ -155,7 +155,7 @@ void Player::move_player_left()
     }
     if (!player_on_ground && !in_action_glide && !hook_end_attached)
     {
-        body->ApplyLinearImpulseToCenter(b2Vec2(14, 0), true);
+        body->ApplyLinearImpulseToCenter(b2Vec2(16, 0), true);
     }
 }
 
@@ -167,7 +167,7 @@ void Player::move_player_right()
     }
     if (!player_on_ground && !in_action_glide && !hook_end_attached)
     {
-        body->ApplyLinearImpulseToCenter(b2Vec2(-14, 0), true);
+        body->ApplyLinearImpulseToCenter(b2Vec2(-16, 0), true);
     }
 }
 
@@ -185,7 +185,7 @@ void Player::action_jump()
     else if (player_on_ground)
     {
         player_on_ground = false;
-        body->ApplyLinearImpulseToCenter(b2Vec2(0, 250), true); // AQUI É ONDE MUDA MESMO O PULO
+        body->ApplyLinearImpulseToCenter(b2Vec2(0, 200), true); // AQUI É ONDE MUDA MESMO O PULO
         // in_action_jump = true;
 
         color = sf::Color::Green;
