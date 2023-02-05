@@ -61,25 +61,89 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
     is_hook_impulse_applied = false;
 
     // player's aim indicator
-    player_aim.setSize(sf::Vector2f(5, 30));
+    // player_aim.setSize(sf::Vector2f(5, 30));
     player_aim.setOrigin(5, 25);
-    player_aim.setFillColor(sf::Color::Red);
+    // player_aim.setFillColor(sf::Color::Red);
     player_aim.setPosition(sf::Vector2f(x, SCREEN_HEIGHT - y));
     aim_angle = 0;
+
+    // player animation (insert the a)
+    action = idle;
+    previous_action = idle;
+
+    // idle animation (position 0)
+    animations.push_back(new pte::Animation("resources/yuca/yuca_idle.png", 500 / 7, 650 / 7, 7, 30, 30, 0.2f));
+
+    // running left animation (position 1)
+    animations.push_back(new pte::Animation("resources/spritesheet2.png", 30, 44, 6, 0, 0, 0.5f));
+
+    // running right animation (position 2)
+    animations.push_back(new pte::Animation("resources/spritesheet3.png", 30, 44, 6, 0, 0, 0.5f));
+
+    // jump animation (position 3)
+    animations.push_back(new pte::Animation("resources/spritesheet4.png", 30, 44, 6, 0, 0, 0.5f));
+
+    // hook animation (position 4)
+    animations.push_back(new pte::Animation("resources/yuca/yuca_hook.png", 500 / 7, 650 / 7, 6, 0, 0, 0.25f));
+
+    // glide animation (position 5)
+    animations.push_back(new pte::Animation("resources/yuca/yuca_glide.png", 500 / 7, 650 / 7, 8, 0, 0, 0.2f));
+
+    // load hook sprite
+    if (!hook_texture.loadFromFile("resources/hook.png"))
+    {
+        std::cerr << "Failed to load hook sprite" << std::endl;
+    }
+
+    // load player aim
+    if (!player_aim_texture.loadFromFile("resources/yuca/yuca_aim.png"))
+    {
+        std::cerr << "Failed to load player aim sprite" << std::endl;
+    }
 }
 
 void Player::render_player(sf::RenderWindow &window)
 {
-    shape.setPosition(body->GetPosition().x * PPM, SCREEN_HEIGHT - (body->GetPosition().y * PPM));
-    shape.setOrigin(width / 2, height / 2);
-    shape.setSize(sf::Vector2f(width, height));
-    shape.setRotation(-1 * body->GetAngle() * DEG_PER_RAD);
-    shape.setFillColor(color);
-    window.draw(shape);
+
+    sf::Sprite *frame_sprite = animations[action]->get_sprite();
+
+    // // For the correct Y coordinate of our drawable sprite, we must substract from WINDOW_HEIGHT
+    // // because SFML uses OpenGL coordinate system where X is right, Y is down
+    // // while Box2D uses traditional X is right, Y is up
+    frame_sprite->setPosition(body->GetPosition().x * PPM, SCREEN_HEIGHT - (body->GetPosition().y * PPM));
+
+    // // We also need to set our drawable's origin to its center
+    // // because in SFML, "position" refers to the upper left corner
+    // // while in Box2D, "position" refers to the body's center
+    // frame_sprite->setOrigin(width / 2, height / 2);
+
+    // sf::RectangleShape shape;
+    // shape.setPosition(body->GetPosition().x * PPM, SCREEN_HEIGHT - (body->GetPosition().y * PPM));
+    // shape.setOrigin(width / 2, height / 2);
+    // shape.setSize(sf::Vector2f(width, height));
+    // shape.setRotation(-1 * body->GetAngle() * DEG_PER_RAD);
+    // shape.setFillColor(color);
+    // window.draw(shape);
+
+    // window->draw(frame_sprite);
+    window.draw(*frame_sprite);
+
+    if (hook_end_attached)
+    {
+        render_hook(window);
+        render_player_aim(window);
+    }
 }
 
 void Player::render_player_aim(sf::RenderWindow &window)
 {
+    player_aim.setTexture(player_aim_texture);
+    sf::Vector2f end_size(player_aim_texture.getSize().x / 2, player_aim_texture.getSize().y / 2);
+    sf::Vector2f scale(end_size.x / player_aim_texture.getSize().x, end_size.y / player_aim_texture.getSize().y);
+    // player_aim.scale(sf::Vector2f(scale.x, scale.y));
+    // player_aim.setScale(0.5, 0,5);
+    player_aim.setScale(sf::Vector2f(0.15, 0.15));
+
     window.draw(player_aim);
 }
 
@@ -107,47 +171,13 @@ void Player::move_player_right()
     }
 }
 
-void Player::action_jump_glide()
-{
-
-    if (hook_end_attached && !is_hook_impulse_applied)
-    {
-        // std::cout << aim_angle << std::endl;
-        b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
-        direction *= 1000;
-        body->ApplyLinearImpulseToCenter(direction, true);
-        is_hook_impulse_applied = true;
-        destroy_hook();
-    }
-    else if (player_on_ground)
-    {
-        player_on_ground = false;
-        body->ApplyLinearImpulseToCenter(b2Vec2(0, 250), true);
-        // in in_action_jump = true;
-
-        // color = sf::Color::Cyan;
-        color = sf::Color::Green;
-    }
-    else
-    {
-        if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached)
-        {
-            in_action_glide = true;
-            body->SetGravityScale(0.2f);
-            body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, 0));
-            body->ApplyLinearImpulseToCenter(b2Vec2(0, 80), true);
-            color = sf::Color::Yellow;
-        }
-    }
-}
-
 void Player::action_jump()
 {
     if (hook_end_attached && !is_hook_impulse_applied)
     {
         // std::cout << aim_angle << std::endl;
         b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
-        direction *= 700;
+        direction *= 600;
         body->ApplyLinearImpulseToCenter(direction, true);
         is_hook_impulse_applied = true;
         destroy_hook();
@@ -155,8 +185,8 @@ void Player::action_jump()
     else if (player_on_ground)
     {
         player_on_ground = false;
-        body->ApplyLinearImpulseToCenter(b2Vec2(0, 250), true);
-        // in in_action_jump = true;
+        body->ApplyLinearImpulseToCenter(b2Vec2(0, 250), true); // AQUI É ONDE MUDA MESMO O PULO
+        // in_action_jump = true;
 
         color = sf::Color::Green;
     }
@@ -164,7 +194,7 @@ void Player::action_jump()
 
 void Player::action_glide()
 {
-    if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached)
+    if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached && !player_on_ground)
     {
         in_action_glide = true;
         body->SetGravityScale(0.2f);
@@ -217,7 +247,7 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
 
     // -------------------- angle --------------------
     // player's aim angle and position
-    player_aim.setPosition(sf::Vector2f(body->GetPosition().x * PPM, SCREEN_HEIGHT - body->GetPosition().y * PPM));
+    player_aim.setPosition(sf::Vector2f((body->GetPosition().x * PPM) - 10, (SCREEN_HEIGHT - body->GetPosition().y * PPM) + 5));
 
     // get mouse positions relative to the view
     sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
@@ -244,7 +274,7 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
     aim_angle = aim_angle_rad * 180.0f / b2_pi;
 
     // set player aim rotation
-    player_aim.setRotation(-aim_angle + 90);
+    player_aim.setRotation(-aim_angle + 90 + 180);
 }
 
 // --------------------- hook ----------------------
@@ -316,6 +346,10 @@ void Player::use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec)
                     hook_joint->SetMinLength(1.f);
                     hook_joint->SetLength(distance);
                     hook_joint->SetMaxLength(distance);
+                    if (distance < 3)
+                    {
+                        hook_joint->SetMaxLength(3.f);
+                    }
 
                     body->ApplyForceToCenter(b2Vec2(0, -1), true);
                     hook_end_attached = true;
@@ -329,22 +363,39 @@ void Player::render_hook(sf::RenderWindow &window)
 {
     if (hook_end_attached)
     {
-        // render hook box
-        sf::RectangleShape hook;
-        hook.setPosition(hook_end.body->GetPosition().x * PPM, SCREEN_HEIGHT - (hook_end.body->GetPosition().y * PPM));
-        hook.setOrigin(hook_end.width / 2, hook_end.height / 2);
-        hook.setSize(sf::Vector2f(hook_end.width, hook_end.height));
-        hook.setRotation(-1 * hook_end.body->GetAngle() * DEG_PER_RAD);
-        hook.setFillColor(hook_end.color);
-        window.draw(hook);
+        // draw hook sprite !!
+        sf::Sprite sprite;
+        sprite.setTexture(hook_texture);
 
-        // render line
-        sf::VertexArray line(sf::Lines, 2);
-        line[0].position = sf::Vector2f(body->GetPosition().x * PPM, SCREEN_HEIGHT - body->GetPosition().y * PPM);
-        line[1].position = sf::Vector2f(hook_end.body->GetPosition().x * PPM, SCREEN_HEIGHT - hook_end.body->GetPosition().y * PPM);
-        line[0].color = sf::Color::Red;
-        line[1].color = sf::Color::Red;
-        window.draw(line);
+        sf::Vector2f point_a = sf::Vector2f(body->GetPosition().x * PPM, SCREEN_HEIGHT - body->GetPosition().y * PPM);
+        sf::Vector2f point_b = sf::Vector2f(hook_end.body->GetPosition().x * PPM, SCREEN_HEIGHT - hook_end.body->GetPosition().y * PPM);
+
+        point_a.x -= 13;
+        point_a.y += 10;
+
+        // Set the position of the sprite based on the two points
+        sf::Vector2f topPoint(point_b.x, point_b.y);
+        sf::Vector2f bottomPoint(point_a.x, point_a.y);
+        // sf::Vector2f centerPoint = (topPoint + bottomPoint) / 2.f;
+        sprite.setPosition(sf::Vector2f(topPoint.x, topPoint.y));
+        sprite.setOrigin(30, 30);
+
+        // Set the rotation of the sprite
+        float angle = std::atan2(bottomPoint.y - topPoint.y, bottomPoint.x - topPoint.x) * 180.f / 3.14159265f;
+        sprite.setRotation(angle);
+
+        // Set the scale of the sprite
+        float width = hook_texture.getSize().x * 0.3;
+        float height = hook_texture.getSize().y * 0.3;
+        sprite.setScale(width / hook_texture.getSize().x, height / hook_texture.getSize().y);
+
+        float distance = std::sqrt((topPoint.x - bottomPoint.x) * (topPoint.x - bottomPoint.x) +
+                                   (topPoint.y - bottomPoint.y) * (topPoint.y - bottomPoint.y));
+
+        sprite.setTextureRect(sf::IntRect(0, 0, distance * 3.33, 50));
+
+        // Draw the sprite
+        window.draw(sprite);
     }
 }
 
@@ -359,4 +410,54 @@ void Player::destroy_hook()
     world->DestroyBody(hook_end.body);
     hook_end_attached = false;
     is_hook_impulse_applied = false;
+}
+
+// --------------------- player animation ----------------------
+
+void Player::update_player_animation(float delta_time)
+{
+
+    // on hook
+    if (hook_end_attached)
+    {
+        previous_action = action;
+        action = hook;
+    }
+    // player glide
+    else if (in_action_glide)
+    {
+        previous_action = action;
+        action = glide;
+    }
+    // player idle
+    else if (player_on_ground && body->GetLinearVelocity().x == 0)
+    {
+        previous_action = action;
+        action = idle;
+    }
+    // player running right
+    else if (player_on_ground && body->GetLinearVelocity().x < 0)
+    {
+        previous_action = action;
+        action = running_right;
+    }
+    // player running left
+    else if (player_on_ground && body->GetLinearVelocity().x > 0)
+    {
+        previous_action = action;
+        action = running_left;
+    }
+    // player jump
+    else if (!player_on_ground && !in_action_glide && !hook_end_attached)
+    {
+        previous_action = action;
+        action = jump;
+    }
+
+    if (action != previous_action)
+    {
+        animations[previous_action]->reset();
+    }
+
+    animations[action]->update_animation(delta_time);
 }

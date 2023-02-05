@@ -22,6 +22,11 @@
 #define MAIN_MENU_PLAY_BUTTON "resources/main-menu/play_btn.png"
 #define MAIN_MENU_QUIT_BUTTON "resources/main-menu/quit_btn.png"
 
+// intro
+#define INTRO_STRIP1_FILEPATH "resources/gato.jpg"
+#define INTRO_STRIP2_FILEPATH "resources/gato.jpg"
+#define INTRO_STRIP3_FILEPATH "resources/gato.jpg"
+
 // game
 #define GAME_BACKGROUND_FILEPATH "resources/splash.png"
 #define PAUSE_BUTTON "resources/pause_btn.png"
@@ -34,14 +39,10 @@
 // defaults
 #define DEFAULT_FONT_PATH "resources/fonts/VT323.ttf"
 
-// background
-/* #define BACKGROUND_LV1_LAYER01 "resources/background/Camada_01_Ato1.png"
-#define BACKGROUND_LV1_LAYER02 "resources/background/Camada_02_Ato1.png"
-#define BACKGROUND_LV1_LAYER03 "resources/background/Camada_03_Ato1.png"
-#define BACKGROUND_LV1_LAYER04 "resources/background/Camada_04_Ato1.png"
-#define BACKGROUND_LV1_LAYER05 "resources/background/Camada_05_Ato1.png"
-#define BACKGROUND_LV1_LAYER06 "resources/background/Camada_06_Ato1.png"
-#define BACKGROUND_LV1_LAYER07 "resources/background/Camada_07_Ato1.png"
-#define BACKGROUND_LV1_LAYER08 "resources/background/Camada_08_Ato1.png" */
+// credits
+#define CREDITS_BACKGROUND_FILEPATH "resources/main-menu.png"
+#define CREDITS_TITLE_FILEPATH "resources/main-menu.png"
+#define CREDITS_PLAY_BUTTON "resources/main-menu/play_btn.png"
+#define CREDITS_QUIT_BUTTON "resources/main-menu/quit_btn.png"
 
 #endif

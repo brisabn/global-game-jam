@@ -12,6 +12,7 @@
 #include <cmath>
 #include "engine/include/generic-state.hpp"
 #include "states/pause-state.hpp"
+#include "credits-state.hpp"
 #include "definitions.hpp"
 #include "box2d/box2d.h"
 
@@ -39,6 +40,11 @@ private:
 
     // background
     sf::Sprite tree1, tree2, background;
+    // textures
+    sf::Texture box_texture;
+    sf::Texture roots_texture;
+    sf::Texture end_texture;
+    sf::Sprite end_sprite;
 
 public:
     using GenericState::GenericState;

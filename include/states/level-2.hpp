@@ -40,6 +40,12 @@ private:
     // background
     sf::Sprite tree1, tree2, background;
 
+    // textures
+    sf::Texture box_texture;
+    sf::Texture roots_texture;
+    sf::Texture end_texture;
+    sf::Sprite end_sprite;
+
 public:
     using GenericState::GenericState;
 

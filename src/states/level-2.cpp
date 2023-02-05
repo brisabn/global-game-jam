@@ -36,6 +36,25 @@ void Level2::init()
     assets->load_texture("tree2", "resources/background/Background_2.png");
     tree2.setTexture(assets->get_texture("tree2"));
     tree2.setPosition((SCREEN_WIDTH - tree2.getGlobalBounds().width) / 2, (SCREEN_HEIGHT - 3 * tree2.getGlobalBounds().height) / 2);
+
+    // load texture
+    if (!box_texture.loadFromFile("resources/block_texture.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
+    if (!roots_texture.loadFromFile("resources/small_roots_texture.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
+    if (!end_texture.loadFromFile("resources/end_level.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
+
+    // goal position
+    end_sprite.setTexture(end_texture);
+    end_sprite.setPosition(sf::Vector2f(650, -1050));
+    end_sprite.setScale(sf::Vector2f(0.15, 0.15));
 }
 
 void Level2::handle_input()
@@ -124,8 +143,8 @@ void Level2::draw(float delta_time)
     window->draw(this->tree1);
     window->draw(this->tree2);
 
-    render_box_vector(*window, boxes);
-    render_box_vector(*window, hook_boxes);
+    render_box_vector(*window, boxes, box_texture);
+    render_box_vector(*window, hook_boxes, roots_texture);
 
     player->render_player(*window);
     player->render_player_aim(*window);
