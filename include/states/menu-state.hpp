@@ -1,9 +1,9 @@
 /**
  * @file menu-state.hpp
  * @date 2023-01-06
- * 
+ *
  * @brief Example game menu state.
- * 
+ *
  */
 
 #ifndef PTE_MENU_STATE_HPP
@@ -21,6 +21,7 @@ private:
     sf::Sprite quit_button;
     sf::Sprite credits_button;
     sf::Text title;
+    sf::Sprite background;
 
 public:
     using GenericState::GenericState;

@@ -1,8 +1,8 @@
 /**
  * @file definitions.hpp
- * 
+ *
  * @brief General definitions used across the program
- * 
+ *
  */
 
 #ifndef DEFINITIONS_HPP
@@ -17,11 +17,11 @@
 #define SPLASH_SCENE_BACKGROUND_FILEPATH "resources/prato-logo.png"
 
 // main menu
-#define MAIN_MENU_BACKGROUND_FILEPATH "resources/main-menu.png"
 #define MAIN_MENU_TITLE_FILEPATH "resources/main-menu.png"
 #define MAIN_MENU_PLAY_BUTTON "resources/main-menu/play_btn.png"
-#define MAIN_MENU_QUIT_BUTTON "resources/main-menu/quit_btn.png"
+#define MAIN_MENU_QUIT_BUTTON "resources/main-menu/quit_button.png"
 #define MAIN_MENU_CREDITS_BUTTON "resources/main-menu/credits_btn.png"
+#define MAIN_MENU_BACKGROUND "resources/main-menu/background.png"
 
 // game
 #define GAME_BACKGROUND_FILEPATH "resources/splash.png"

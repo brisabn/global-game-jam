@@ -2,30 +2,30 @@
 
 void MainMenuState::init()
 {
-    // setup title
-    assets->load_font("default_font", DEFAULT_FONT_PATH);
-    this->title.setFont(assets->get_font("default_font"));
-    this->title.setString("Yuca's adventure");
-    this->title.setCharacterSize(55);
-    this->title.setFillColor(sf::Color::White);
-    this->title.setPosition((SCREEN_WIDTH / 2) - (this->title.getGlobalBounds().width / 2), SCREEN_HEIGHT * 0.2);
 
     // setup play button
     assets->load_texture("play_button", MAIN_MENU_PLAY_BUTTON);
     this->play_button.setTexture(assets->get_texture("play_button"));
     this->play_button.setScale(0.35, 0.35);
-    this->play_button.setPosition((SCREEN_WIDTH / 2) - (this->play_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->play_button.getGlobalBounds().height * (-1.0));
+    this->play_button.setPosition((SCREEN_WIDTH / 2) + (this->play_button.getGlobalBounds().width / 2) * 2.5f, (SCREEN_HEIGHT / 2) + this->play_button.getGlobalBounds().height * (1.0));
 
     // setup quit button
     assets->load_texture("quit_button", MAIN_MENU_QUIT_BUTTON);
     this->quit_button.setTexture(assets->get_texture("quit_button"));
-    this->quit_button.setPosition((SCREEN_WIDTH / 2) - (this->quit_button.getGlobalBounds().width / 2) , (SCREEN_HEIGHT / 2) + this->quit_button.getGlobalBounds().height * 2.0);
+    this->quit_button.setScale(0.35, 0.35);
+    this->quit_button.setPosition((SCREEN_WIDTH / 2) + (this->quit_button.getGlobalBounds().width / 2) * 2.5f, (SCREEN_HEIGHT / 2) + this->quit_button.getGlobalBounds().height * (3.f));
 
     // credits button
     assets->load_texture("credits_button", MAIN_MENU_CREDITS_BUTTON);
     this->credits_button.setTexture(assets->get_texture("credits_button"));
     this->credits_button.setScale(0.35, 0.35);
-    this->credits_button.setPosition((SCREEN_WIDTH / 2) - (this->credits_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->credits_button.getGlobalBounds().height * (-0.10));
+    this->credits_button.setPosition((SCREEN_WIDTH / 2) + (this->credits_button.getGlobalBounds().width / 2) * 2.5f, (SCREEN_HEIGHT / 2) + this->credits_button.getGlobalBounds().height * (2.f));
+
+    // background
+    assets->load_texture("background", MAIN_MENU_BACKGROUND);
+    this->background.setTexture(assets->get_texture("background"));
+    this->background.setScale(0.6f, 0.6f);
+    this->background.setPosition((SCREEN_WIDTH / 2) - (this->background.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) - (this->background.getGlobalBounds().height / 2));
 }
 
 void MainMenuState::handle_input()
@@ -45,13 +45,13 @@ void MainMenuState::handle_input()
             add_state<GameState>(true);
         }
         if (input->is_sprite_clicked(this->credits_button, sf::Mouse::Left, *window))
-		{
-			// Remove The Menu State Off The Stack
-			remove_state();
+        {
+            // Remove The Menu State Off The Stack
+            remove_state();
 
-			// Switch To Main Credits State By Replacing The Game State
-			add_state<MainCreditsState>(true);
-		}
+            // Switch To Main Credits State By Replacing The Game State
+            add_state<MainCreditsState>(true);
+        }
     }
 }
 
@@ -62,7 +62,7 @@ void MainMenuState::update(float delta_time)
 void MainMenuState::draw(float delta_time)
 {
     window->clear(sf::Color(65, 11, 95));
-
+    window->draw(this->background);
     window->draw(this->title);
     window->draw(this->play_button);
     window->draw(this->quit_button);
