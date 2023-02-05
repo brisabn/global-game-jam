@@ -2,7 +2,7 @@
 
 void GameState::init()
 {
-    window->setFramerateLimit(60);
+    // window->setFramerateLimit(60);
 
     assets->load_texture("pause_button", PAUSE_BUTTON);
     pause_button.setTexture(assets->get_texture("pause_button"));
@@ -13,8 +13,6 @@ void GameState::init()
 
     // create player
     player = new Player(world, 210, 180, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
-    // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
-    // 200 180
 
     // all boxes in this level
     init_boxes();
@@ -37,7 +35,6 @@ void GameState::init()
     assets->load_texture("tree2", "resources/background/Background_2.png");
     tree2.setTexture(assets->get_texture("tree2"));
     tree2.setPosition((SCREEN_WIDTH - tree2.getGlobalBounds().width) / 2, (SCREEN_HEIGHT - 3 * tree2.getGlobalBounds().height) / 2);
-    // window->setSize(sf::Vector2u(SCREEN_WIDTH * 1.5, SCREEN_HEIGHT * 1.5));
 
     // load texture
     if (!box_texture.loadFromFile("resources/block_texture.png"))
@@ -48,24 +45,43 @@ void GameState::init()
     {
         std::cerr << "error loading texture" << std::endl;
     }
-    if (!end_texture.loadFromFile("resources/end_level.png"))
+    if (!end_texture.loadFromFile("resources/door.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
+    if (!door_texture.loadFromFile("resources/door.png"))
     {
         std::cerr << "error loading texture" << std::endl;
     }
 
     // goal position
     end_sprite.setTexture(end_texture);
-    end_sprite.setPosition(sf::Vector2f(650, -1050));
-    end_sprite.setScale(sf::Vector2f(0.15, 0.15));
+    end_sprite.setPosition(sf::Vector2f(650, -1040));
+    end_sprite.setScale(sf::Vector2f(0.3, 0.5));
+
+    // door
+    door_sprite.setTexture(door_texture);
+    door_sprite.setPosition(sf::Vector2f(180, 383));
+    door_sprite.setScale(sf::Vector2f(0.3, 0.5));
 
     // audio
-    audio = new Audio();
-    audio->define_sound("resources/music/soundtrack/ato_2_novo.ogg", 100);
-    audio->play_sound();
+    music = new Audio();
+    music->define_music("resources/music/soundtrack/ato_2_novo.ogg", 100);
+    music->play_music();
+    music->music.setLoop(true);
+    music_on = true;
 }
 
 void GameState::handle_input()
 {
+    // check for music and pause
+    if (music_on == false)
+    {
+        std::cout << "false" << std::endl;
+        music->music.play();
+        music_on = true;
+    }
+
     sf::Event event;
 
     while (window->pollEvent(event))
@@ -77,7 +93,10 @@ void GameState::handle_input()
 
         if (input->is_sprite_clicked(this->pause_button, sf::Mouse::Left, *window))
         {
-            // PAUSE
+            // pause game
+            music->music.pause();
+            
+            music_on = false;
             add_state<PauseState>(false);
         }
     }
@@ -141,7 +160,7 @@ void GameState::update(float delta_time)
     // verify goal
     if (player->animations[player->action]->get_sprite()->getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
     {
-        delete audio;
+        delete music;
         add_state<Level2>(true);
     }
 
@@ -163,11 +182,11 @@ void GameState::draw(float delta_time)
     render_box_vector(*window, boxes, box_texture);
     render_box_vector(*window, hook_boxes, roots_texture);
 
-    // player->render_hook(*window);
-    player->render_player(*window);
-    // player->render_player_aim(*window);
-
+    // doors
     window->draw(end_sprite);
+    window->draw(door_sprite);
+
+    player->render_player(*window);
 
     // set default view
     window->setView(default_view);
@@ -243,6 +262,6 @@ void GameState::init_boxes()
     hook_boxes.push_back(create_ground(world, 257, -879, 40, 40, sf::Color::Magenta, true));
 
     // paredes
-    boxes.push_back(create_ground(world, 812, -1400, 50, 2300, sf::Color::White, false));
-    boxes.push_back(create_ground(world, 162, -1440, 50, 2000, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 812, -1100, 50, 2300, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 162, -1140, 50, 2000, sf::Color::White, false));
 }

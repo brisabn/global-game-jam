@@ -38,7 +38,8 @@ private:
     sf::View view;
     sf::View default_view;
 
-    Audio *audio;
+    Audio *music;
+    bool music_on;
 
     // background
     sf::Sprite tree1, tree2, background;
@@ -48,6 +49,9 @@ private:
     sf::Texture roots_texture;
     sf::Texture end_texture;
     sf::Sprite end_sprite;
+
+    sf::Texture door_texture;
+    sf::Sprite door_sprite;
 
 public:
     using GenericState::GenericState;

@@ -44,7 +44,7 @@ void PauseState::handle_input()
 		{
 			// Remove The Pause State Off The Stack
 			remove_state();
-
+			
 			// Switch To Main Menu State By Replacing The Game State
 			add_state<MainMenuState>(true);
 		}

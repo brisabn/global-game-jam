@@ -13,6 +13,7 @@
 #include "box2d/box2d.h"
 #include "game-objects.hpp"
 #include "engine/include/animation.hpp"
+#include "audio.hpp"
 
 #define PLAYER_MAX_LINEAR_VELOCITY 4
 
@@ -67,6 +68,13 @@ private:
 
     // player animations
     player_action previous_action;
+
+    // audio
+    Audio walking_audio;
+    Audio jump_audio;
+    Audio hook_hit_audio;
+    Audio hit_ground_audio;
+    Audio glide_audio;
 
 public:
     std::vector<pte::Animation *> animations;

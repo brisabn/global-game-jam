@@ -16,9 +16,8 @@
 class MainCreditsState : public pte::GenericState
 {
 private:
-    sf::Sprite menu_button, quit_button;
-    sf::Text title;
     sf::Sprite background;
+    float total_time;
 
 public:
     using GenericState::GenericState;

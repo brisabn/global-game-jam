@@ -2,7 +2,7 @@
  * @file game-state.hpp
  * @date 2023-01-06
  *
- * @brief Example game state. Runs a bouncing ball demo.
+ * @brief Game state.
  *
  */
 
@@ -31,7 +31,9 @@ private:
     // b2d
     b2World *world;
 
-    Audio *audio;
+    // sounds
+    Audio *music;
+    bool music_on;
 
     // simulation
     std::vector<Box> boxes;
@@ -49,6 +51,9 @@ private:
     sf::Texture roots_texture;
     sf::Texture end_texture;
     sf::Sprite end_sprite;
+    
+    sf::Texture door_texture;
+    sf::Sprite door_sprite;
 
 public:
     using GenericState::GenericState;
