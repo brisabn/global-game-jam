@@ -61,7 +61,7 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
     is_hook_impulse_applied = false;
 
     // player's aim indicator
-    player_aim.setSize(sf::Vector2f(10, 30));
+    player_aim.setSize(sf::Vector2f(5, 30));
     player_aim.setOrigin(5, 25);
     player_aim.setFillColor(sf::Color::Red);
     player_aim.setPosition(sf::Vector2f(x, SCREEN_HEIGHT - y));
@@ -138,7 +138,7 @@ void Player::action_jump()
     {
         // std::cout << aim_angle << std::endl;
         b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
-        direction *= 1000;
+        direction *= 700;
         body->ApplyLinearImpulseToCenter(direction, true);
         is_hook_impulse_applied = true;
         destroy_hook();
@@ -155,7 +155,7 @@ void Player::action_jump()
 
 void Player::action_glide()
 {
-    if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached)
+    if (body->GetLinearVelocity().y < 3 && !in_action_glide && !hook_end_attached && !player_on_ground)
     {
         in_action_glide = true;
         body->SetGravityScale(0.2f);
@@ -238,11 +238,17 @@ void Player::update_player_state(sf::RenderWindow &window, sf::View &view)
 
 void Player::use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec)
 {
-    if (!hook_end_attached && !in_action_glide)
+    if (!hook_end_attached)
     {
         // angle is updated every frame with update_player_state() method
 
-        int hook_range = 10;
+        if (in_action_glide)
+        {
+            in_action_glide = false;
+            body->SetGravityScale(original_gravity_scale);
+            color = sf::Color::Cyan;
+        }
+        int hook_range = 5;
 
         // get closest point using raycast and the pointing vector
         b2Vec2 direction(cos(aim_angle_rad), sin(aim_angle_rad));
