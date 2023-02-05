@@ -12,6 +12,7 @@
 #include <iostream>
 #include "box2d/box2d.h"
 #include "game-objects.hpp"
+#include "engine/include/animation.hpp"
 
 #define PLAYER_MAX_LINEAR_VELOCITY 5
 
@@ -26,6 +27,17 @@ struct RayCastClosestCallback : public b2RayCastCallback
     float ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float fraction);
 };
 
+// player action
+enum player_action
+{
+    idle,
+    running_left,
+    running_right,
+    jump,
+    hook,
+    glide,
+};
+
 // everything related to player
 class Player
 {
@@ -38,6 +50,7 @@ private:
     // hook
     b2DistanceJointDef hook_joint_def;
     b2DistanceJoint *hook_joint;
+    sf::Texture hook_texture;
 
     bool hook_end_attached;
     bool player_on_ground;
@@ -48,6 +61,11 @@ private:
     float original_gravity_scale;
 
     b2World *world;
+
+    // player animations
+    std::vector<pte::Animation*> animations;
+    player_action action;
+    player_action previous_action;
 
 public:
     float width;
@@ -61,6 +79,7 @@ public:
     Player(b2World *world, int x, int y, float width, float height, float density, float friction, sf::Color color);
 
     void update_player_state(sf::RenderWindow &window, sf::View &view);
+    void update_player_animation(float delta_time);
     void move_player_right();
     void move_player_left();
     void action_jump_glide();

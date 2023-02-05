@@ -39,4 +39,10 @@ namespace pte
     {
         return &sprites[current_sprite];
     }
+
+    void Animation::reset()
+    {
+        current_sprite = 0;
+        time_since_last_frame = 0.0f;
+    }
 }

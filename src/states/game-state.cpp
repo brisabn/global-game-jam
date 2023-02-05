@@ -22,6 +22,16 @@ void GameState::init()
     view.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
     view.setCenter(sf::Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
     default_view = view;
+
+    // load texture
+    if (!box_texture.loadFromFile("resources/block_texture.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
+    if (!roots_texture.loadFromFile("resources/small_roots_texture.png"))
+    {
+        std::cerr << "error loading texture" << std::endl;
+    }
 }
 
 void GameState::handle_input()
@@ -42,8 +52,12 @@ void GameState::handle_input()
         }
     }
 
-    // player movement
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    // player movement (jump have priority)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        player->action_jump();
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         player->move_player_left();
     }
@@ -55,10 +69,7 @@ void GameState::handle_input()
     {
         player->action_glide();
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-    {
-        player->action_jump();
-    }
+    
 
     // grappling hook
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -87,6 +98,7 @@ void GameState::update(float delta_time)
 
     // update player (used in movement states)
     player->update_player_state(*window, view);
+    player->update_player_animation(delta_time);
 
     // set camera position relative to the player
     int camera_x = SCREEN_WIDTH / 2;
@@ -102,17 +114,17 @@ void GameState::update(float delta_time)
 
 void GameState::draw(float delta_time)
 {
-    window->clear(sf::Color(56, 42, 55));
+    window->clear(sf::Color(84, 69, 65));
 
     // set camera
     window->setView(view);
 
-    render_box_vector(*window, boxes);
-    render_box_vector(*window, hook_boxes);
+    render_box_vector(*window, boxes, box_texture);
+    render_box_vector(*window, hook_boxes, roots_texture);
 
-    player->render_player(*window);
-    player->render_player_aim(*window);
     player->render_hook(*window);
+    player->render_player(*window);
+    // player->render_player_aim(*window);
 
     // set default view
     window->setView(default_view);

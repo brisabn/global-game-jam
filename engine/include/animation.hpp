@@ -20,6 +20,7 @@ namespace pte
         Animation(std::string filepath, int width, int height, float frame_interval);
         void update_animation(float delta_time);
         sf::Sprite *get_sprite();
+        void reset();
     };
 }
 
