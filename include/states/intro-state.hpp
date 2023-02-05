@@ -26,6 +26,7 @@ protected:
     std::size_t itr = 0;
 
     sf::Text text;
+    sf::Text instruction;
     std::ifstream text_file;
     sf::Font font;
     sf::Sprite background;
