@@ -82,7 +82,6 @@ public:
     void update_player_animation(float delta_time);
     void move_player_right();
     void move_player_left();
-    void action_jump_glide();
     void action_jump();
     void action_glide();
     void use_hook(sf::RenderWindow &window, std::vector<Box> &box_vec);
