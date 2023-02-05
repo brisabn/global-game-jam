@@ -13,7 +13,7 @@ void GameState::init()
 
     // create player
     player = new Player(world, 200, 180, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
-    // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
+    // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);2
 
     // all boxes in this level
     init_boxes();
@@ -122,7 +122,7 @@ void GameState::update(float delta_time)
     // verify goal
     if (player->animations[player->action]->get_sprite()->getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
     {
-        window->close();
+        add_state<MainCreditsState>(true);
     }
 
     view.setCenter(camera_x, camera_y);

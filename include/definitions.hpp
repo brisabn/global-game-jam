@@ -1,8 +1,8 @@
 /**
  * @file definitions.hpp
- * 
+ *
  * @brief General definitions used across the program
- * 
+ *
  */
 
 #ifndef DEFINITIONS_HPP
@@ -22,6 +22,11 @@
 #define MAIN_MENU_PLAY_BUTTON "resources/main-menu/play_btn.png"
 #define MAIN_MENU_QUIT_BUTTON "resources/main-menu/quit_btn.png"
 
+// intro
+#define INTRO_STRIP1_FILEPATH "resources/gato.jpg"
+#define INTRO_STRIP2_FILEPATH "resources/gato.jpg"
+#define INTRO_STRIP3_FILEPATH "resources/gato.jpg"
+
 // game
 #define GAME_BACKGROUND_FILEPATH "resources/splash.png"
 #define PAUSE_BUTTON "resources/pause_btn.png"
@@ -33,5 +38,11 @@
 
 // defaults
 #define DEFAULT_FONT_PATH "resources/fonts/VT323.ttf"
+
+// credits
+#define CREDITS_BACKGROUND_FILEPATH "resources/main-menu.png"
+#define CREDITS_TITLE_FILEPATH "resources/main-menu.png"
+#define CREDITS_PLAY_BUTTON "resources/main-menu/play_btn.png"
+#define CREDITS_QUIT_BUTTON "resources/main-menu/quit_btn.png"
 
 #endif
