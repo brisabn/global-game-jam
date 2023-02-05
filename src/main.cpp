@@ -3,6 +3,7 @@
 #include "definitions.hpp"
 #include "states/splash-state.hpp"
 #include "states/game-state.hpp"
+#include "states/level-2.hpp"
 #include "states/animation-demo-state.hpp"
 #include "box2d/box2d.h"
 
@@ -10,7 +11,7 @@ int main()
 {
     // First, create a new game. Before starting, set initial state
     pte::Game game = pte::Game(SCREEN_WIDTH, SCREEN_HEIGHT, "Demo");
-    game.init_state<SplashState>();
+    game.init_state<Level2>();
     game.run();
 
     return 0;
