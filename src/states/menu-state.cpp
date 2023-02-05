@@ -20,10 +20,13 @@ void MainMenuState::init()
     this->quit_button.setTexture(assets->get_texture("quit_button"));
     this->quit_button.setPosition((SCREEN_WIDTH / 2) - (this->quit_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->quit_button.getGlobalBounds().height * 2.2);
 
+
+    // window->setSize(sf::Vector2u(SCREEN_WIDTH * 1.5, SCREEN_HEIGHT * 1.5));
     // credits button
     assets->load_texture("credits_button", MAIN_MENU_PLAY_BUTTON);
     this->credits_button.setTexture(assets->get_texture("play_button"));
     this->credits_button.setPosition((SCREEN_WIDTH / 2) - (this->credits_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->credits_button.getGlobalBounds().height * 3.4);
+
 }
 
 void MainMenuState::handle_input()

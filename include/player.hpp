@@ -43,7 +43,9 @@ class Player
 {
 private:
     Box hook_end;
-    sf::RectangleShape player_aim;
+    // sf::RectangleShape player_aim;
+    sf::Texture player_aim_texture;
+    sf::Sprite player_aim;
     float aim_angle;
     float aim_angle_rad;
 
@@ -63,15 +65,15 @@ private:
     b2World *world;
 
     // player animations
-    std::vector<pte::Animation*> animations;
-    player_action action;
     player_action previous_action;
 
 public:
+    std::vector<pte::Animation *> animations;
     float width;
     float height;
     b2BodyDef body_def;
     b2Body *body;
+    player_action action;
 
     sf::RectangleShape shape;
     sf::Color color;

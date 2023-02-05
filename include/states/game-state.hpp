@@ -12,6 +12,7 @@
 #include <cmath>
 #include "engine/include/generic-state.hpp"
 #include "states/pause-state.hpp"
+#include "credits-state.hpp"
 #include "definitions.hpp"
 #include "box2d/box2d.h"
 
@@ -40,6 +41,8 @@ private:
     // textures
     sf::Texture box_texture;
     sf::Texture roots_texture;
+    sf::Texture end_texture;
+    sf::Sprite end_sprite;
     
 
 public:
