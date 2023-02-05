@@ -5,7 +5,7 @@ void MainMenuState::init()
     // setup title
     assets->load_font("default_font", DEFAULT_FONT_PATH);
     this->title.setFont(assets->get_font("default_font"));
-    this->title.setString("MAIN MENU");
+    this->title.setString("Yuca's adventure");
     this->title.setCharacterSize(55);
     this->title.setFillColor(sf::Color::White);
     this->title.setPosition((SCREEN_WIDTH / 2) - (this->title.getGlobalBounds().width / 2), SCREEN_HEIGHT * 0.2);
@@ -13,17 +13,19 @@ void MainMenuState::init()
     // setup play button
     assets->load_texture("play_button", MAIN_MENU_PLAY_BUTTON);
     this->play_button.setTexture(assets->get_texture("play_button"));
-    this->play_button.setPosition((SCREEN_WIDTH / 2) - (this->play_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->play_button.getGlobalBounds().height);
+    this->play_button.setScale(0.35, 0.35);
+    this->play_button.setPosition((SCREEN_WIDTH / 2) - (this->play_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->play_button.getGlobalBounds().height * (-1.0));
 
     // setup quit button
     assets->load_texture("quit_button", MAIN_MENU_QUIT_BUTTON);
     this->quit_button.setTexture(assets->get_texture("quit_button"));
-    this->quit_button.setPosition((SCREEN_WIDTH / 2) - (this->quit_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->quit_button.getGlobalBounds().height * 2.2);
+    this->quit_button.setPosition((SCREEN_WIDTH / 2) - (this->quit_button.getGlobalBounds().width / 2) , (SCREEN_HEIGHT / 2) + this->quit_button.getGlobalBounds().height * 2.0);
 
     // credits button
-    assets->load_texture("credits_button", MAIN_MENU_PLAY_BUTTON);
-    this->credits_button.setTexture(assets->get_texture("play_button"));
-    this->credits_button.setPosition((SCREEN_WIDTH / 2) - (this->credits_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->credits_button.getGlobalBounds().height * 3.4);
+    assets->load_texture("credits_button", MAIN_MENU_CREDITS_BUTTON);
+    this->credits_button.setTexture(assets->get_texture("credits_button"));
+    this->credits_button.setScale(0.35, 0.35);
+    this->credits_button.setPosition((SCREEN_WIDTH / 2) - (this->credits_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->credits_button.getGlobalBounds().height * (-0.10));
 }
 
 void MainMenuState::handle_input()

@@ -11,9 +11,10 @@ void MainCreditsState::init()
     this->title.setPosition((SCREEN_WIDTH / 2) - (this->title.getGlobalBounds().width / 2), SCREEN_HEIGHT * 0.2);
 
    // setup quit button
-	assets->load_texture("home_button", PAUSE_MENU_HOME_BUTTON);
-	this->home_button.setTexture(assets->get_texture("home_button"));
-	this->home_button.setPosition((SCREEN_WIDTH / 2) - (this->home_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->home_button.getGlobalBounds().height * 2.2);
+	assets->load_texture("menu_button", CREDITS_MENU_BUTTON);
+	this->menu_button.setTexture(assets->get_texture("menu_button"));
+    this->menu_button.setScale(0.35, 0.35);
+	this->menu_button.setPosition((SCREEN_WIDTH / 2) - (this->menu_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->menu_button.getGlobalBounds().height * (-1.0));
 }
 
 void MainCreditsState::handle_input()
@@ -22,7 +23,7 @@ void MainCreditsState::handle_input()
 
     while (window->pollEvent(event))
     {
-       if (input->is_sprite_clicked(this->home_button, sf::Mouse::Left, *window))
+       if (input->is_sprite_clicked(this->menu_button, sf::Mouse::Left, *window))
 		{
 			// Remove The Pause State Off The Stack
 			remove_state();
@@ -42,7 +43,8 @@ void MainCreditsState::draw(float delta_time)
     window->clear(sf::Color::Blue);
 
     window->draw(this->title);
-    window->draw(this->home_button);
+    
+    window->draw(this->menu_button);
 
     window->display();
 }

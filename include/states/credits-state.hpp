@@ -16,7 +16,7 @@
 class MainCreditsState : public pte::GenericState
 {
 private:
-    sf::Sprite home_button;
+    sf::Sprite menu_button;
     sf::Text title;
 
 public:

@@ -21,6 +21,7 @@
 #define MAIN_MENU_TITLE_FILEPATH "resources/main-menu.png"
 #define MAIN_MENU_PLAY_BUTTON "resources/main-menu/play_btn.png"
 #define MAIN_MENU_QUIT_BUTTON "resources/main-menu/quit_btn.png"
+#define MAIN_MENU_CREDITS_BUTTON "resources/main-menu/credits_btn.png"
 
 // game
 #define GAME_BACKGROUND_FILEPATH "resources/splash.png"
@@ -36,8 +37,6 @@
 
 // credits
 #define CREDITS_BACKGROUND_FILEPATH "resources/main-menu.png"
-#define CREDITS_TITLE_FILEPATH "resources/main-menu.png"
-#define CREDITS_PLAY_BUTTON "resources/main-menu/play_btn.png"
-#define CREDITS_QUIT_BUTTON "resources/main-menu/quit_btn.png"
+#define CREDITS_MENU_BUTTON "resources/main-menu/menu_btn.png"
 
 #endif
