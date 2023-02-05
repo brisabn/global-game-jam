@@ -18,20 +18,20 @@ void IntroState::intro_sequence()
     this->text.setCharacterSize(SCREEN_WIDTH / 40);
     this->text.setFont(font);
     this->text.setOrigin(sf::Vector2f(0.f, 0.f));
-    this->text.setFillColor(sf::Color::Black);
+    this->text.setFillColor(sf::Color::White);
     this->text.setPosition(sf::Vector2f((SCREEN_WIDTH / 12), (SCREEN_HEIGHT / 1.2)));
 
     this->instruction.setCharacterSize(SCREEN_WIDTH / 30);
     this->instruction.setFont(font);
     this->instruction.setOrigin(sf::Vector2f(0.f, 0.f));
-    this->instruction.setFillColor(sf::Color::Black);
+    this->instruction.setFillColor(sf::Color::White);
     this->instruction.setPosition(sf::Vector2f((SCREEN_WIDTH / 3.73), (SCREEN_HEIGHT / 2.5)));
     this->instruction.setString("Press right key to advance");
 
     // Quadrinhos
     Strip strip1,
         strip2, strip3, strip4, strip5, strip6, strip7;
-    assets->load_texture("background", "resources/intro/intro_background.jpg");
+    assets->load_texture("background", "resources/intro/cutscene_background.png");
 
     assets->load_texture("quadro1", "resources/intro/quadro_1.png");
     assets->load_texture("quadro2", "resources/intro/quadro_2.png");
