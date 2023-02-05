@@ -12,7 +12,7 @@ void GameState::init()
     world = new b2World(b2Vec2(0, -9));
 
     // create player
-    player = new Player(world, 400, 1600, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
+    player = new Player(world, 210, 180, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
     // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
     // 200 180
 
@@ -57,6 +57,11 @@ void GameState::init()
     end_sprite.setTexture(end_texture);
     end_sprite.setPosition(sf::Vector2f(650, -1050));
     end_sprite.setScale(sf::Vector2f(0.15, 0.15));
+
+    // audio
+    audio = new Audio();
+    audio->define_sound("resources/music/soundtrack/ato_2_novo.ogg", 100);
+    audio->play_sound();
 }
 
 void GameState::handle_input()
@@ -136,6 +141,7 @@ void GameState::update(float delta_time)
     // verify goal
     if (player->animations[player->action]->get_sprite()->getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
     {
+        delete audio;
         add_state<Level2>(true);
     }
 
@@ -237,6 +243,6 @@ void GameState::init_boxes()
     hook_boxes.push_back(create_ground(world, 257, -879, 40, 40, sf::Color::Magenta, true));
 
     // paredes
-    boxes.push_back(create_ground(world, 812, -1400, 50, 2000, sf::Color::White, false));
-    boxes.push_back(create_ground(world, 162, -1440, 50, 1800, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 812, -1400, 50, 2300, sf::Color::White, false));
+    boxes.push_back(create_ground(world, 162, -1440, 50, 2000, sf::Color::White, false));
 }
