@@ -91,7 +91,6 @@ Player::Player(b2World *world, int x, int y, float width, float height, float de
 
     // load hook sprite
     if (!hook_texture.loadFromFile("resources/hook.png"))
-        ;
     {
         std::cerr << "Failed to load hook sprite" << std::endl;
     }
