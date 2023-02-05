@@ -44,6 +44,7 @@ Box create_ground(b2World *world, float x, float y, float width, float height, s
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &groundBox;
     fixtureDef.density = 0.0f;
+    // fixtureDef.friction = 1.f;
     fixtureDef.isSensor = is_sensor;
 
     groundBody->CreateFixture(&fixtureDef);

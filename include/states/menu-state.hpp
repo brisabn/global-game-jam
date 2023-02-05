@@ -13,6 +13,8 @@
 #include "states/credits-state.hpp"
 #include "states/game-state.hpp"
 #include "states/intro-state.hpp"
+#include "states/tutorial-state.hpp"
+#include "audio.hpp"
 
 #include "definitions.hpp"
 
@@ -23,6 +25,8 @@ private:
     sf::Sprite quit_button;
     sf::Sprite credits_button;
     sf::Text title;
+    sf::Sprite background;
+    Audio *menu_music;
 
 public:
     using GenericState::GenericState;
