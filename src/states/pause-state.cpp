@@ -12,6 +12,7 @@ void PauseState::init()
 
 	// setup play button
 	assets->load_texture("resume_button", PAUSE_MENU_RESUME_BUTTON);
+	this->resume_button.setScale(0.35, 0.35);
 	this->resume_button.setTexture(assets->get_texture("resume_button"));
 	this->resume_button.setPosition((SCREEN_WIDTH / 2) - (this->resume_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->resume_button.getGlobalBounds().height);
 
