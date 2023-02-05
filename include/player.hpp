@@ -14,7 +14,7 @@
 #include "game-objects.hpp"
 #include "engine/include/animation.hpp"
 
-#define PLAYER_MAX_LINEAR_VELOCITY 5
+#define PLAYER_MAX_LINEAR_VELOCITY 4
 
 // raycast callback. check for closest object
 struct RayCastClosestCallback : public b2RayCastCallback
@@ -36,6 +36,7 @@ enum player_action
     jump,
     hook,
     glide,
+    falling,
 };
 
 // everything related to player
