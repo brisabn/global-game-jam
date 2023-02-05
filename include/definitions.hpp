@@ -23,6 +23,11 @@
 #define MAIN_MENU_CREDITS_BUTTON "resources/main-menu/credits_btn.png"
 #define MAIN_MENU_BACKGROUND "resources/main-menu/background.png"
 
+// intro
+#define INTRO_STRIP1_FILEPATH "resources/gato.jpg"
+#define INTRO_STRIP2_FILEPATH "resources/gato.jpg"
+#define INTRO_STRIP3_FILEPATH "resources/gato.jpg"
+
 // game
 #define GAME_BACKGROUND_FILEPATH "resources/splash.png"
 #define PAUSE_BUTTON "resources/pause_btn.png"

@@ -12,6 +12,10 @@
 #include "engine/include/generic-state.hpp"
 #include "states/credits-state.hpp"
 #include "states/game-state.hpp"
+#include "states/intro-state.hpp"
+#include "states/tutorial-state.hpp"
+#include "audio.hpp"
+
 #include "definitions.hpp"
 
 class MainMenuState : public pte::GenericState
@@ -22,6 +26,7 @@ private:
     sf::Sprite credits_button;
     sf::Text title;
     sf::Sprite background;
+    Audio *menu_music;
 
 public:
     using GenericState::GenericState;
