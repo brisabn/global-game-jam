@@ -14,6 +14,7 @@
 #include "states/pause-state.hpp"
 #include "definitions.hpp"
 #include "box2d/box2d.h"
+#include "audio.hpp"
 
 #include "game-objects.hpp"
 #include "player.hpp"
@@ -36,6 +37,8 @@ private:
     // camera
     sf::View view;
     sf::View default_view;
+
+    Audio *audio;
 
     // background
     sf::Sprite tree1, tree2, background;

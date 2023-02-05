@@ -27,6 +27,11 @@ void MainMenuState::init()
     this->credits_button.setTexture(assets->get_texture("play_button"));
     this->credits_button.setPosition((SCREEN_WIDTH / 2) - (this->credits_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->credits_button.getGlobalBounds().height * 3.4);
 
+    // audio
+    menu_music = new Audio();
+    menu_music->define_sound("resources/music/soundtrack/ato_1_novo.ogg", 100);
+    menu_music->play_sound();
+
 }
 
 void MainMenuState::handle_input()
@@ -38,12 +43,19 @@ void MainMenuState::handle_input()
         if (sf::Event::Closed == event.type || input->is_sprite_clicked(this->quit_button, sf::Mouse::Left, *window))
         {
             window->close();
+            
         }
+
+        // if (sf::Event::KeyPressed)
 
         if (input->is_sprite_clicked(this->play_button, sf::Mouse::Left, *window))
         {
             // Switch to game state
-            add_state<GameState>(true);
+            // menu_music->music.pause();
+            menu_music->sound.pause();
+
+            delete menu_music;
+            add_state<TutorialState>(true);
         }
         if (input->is_sprite_clicked(this->credits_button, sf::Mouse::Left, *window))
 		{

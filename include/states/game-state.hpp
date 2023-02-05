@@ -16,6 +16,7 @@
 #include "states/level-2.hpp"
 #include "definitions.hpp"
 #include "box2d/box2d.h"
+#include "audio.hpp"
 
 #include "game-objects.hpp"
 #include "player.hpp"
@@ -29,6 +30,8 @@ private:
 
     // b2d
     b2World *world;
+
+    Audio *audio;
 
     // simulation
     std::vector<Box> boxes;

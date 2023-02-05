@@ -15,14 +15,14 @@ class Audio
 {
     // usar singleton? como?
 private:
+public:
     sf::Music music;
 
     sf::SoundBuffer buffer;
     sf::Sound sound;
 
     std::ifstream audio_file;
-
-public:
+    
     Audio();
     void define_music(std::string myfile, float volume);
     void play_music();
