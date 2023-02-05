@@ -17,10 +17,11 @@
 #define SPLASH_SCENE_BACKGROUND_FILEPATH "resources/prato-logo.png"
 
 // main menu
-#define MAIN_MENU_BACKGROUND_FILEPATH "resources/main-menu.png"
 #define MAIN_MENU_TITLE_FILEPATH "resources/main-menu.png"
 #define MAIN_MENU_PLAY_BUTTON "resources/main-menu/play_btn.png"
-#define MAIN_MENU_QUIT_BUTTON "resources/main-menu/quit_btn.png"
+#define MAIN_MENU_QUIT_BUTTON "resources/main-menu/quit_button.png"
+#define MAIN_MENU_CREDITS_BUTTON "resources/main-menu/credits_btn.png"
+#define MAIN_MENU_BACKGROUND "resources/main-menu/background.png"
 
 // intro
 #define INTRO_STRIP1_FILEPATH "resources/gato.jpg"
@@ -41,8 +42,6 @@
 
 // credits
 #define CREDITS_BACKGROUND_FILEPATH "resources/main-menu.png"
-#define CREDITS_TITLE_FILEPATH "resources/main-menu.png"
-#define CREDITS_PLAY_BUTTON "resources/main-menu/play_btn.png"
-#define CREDITS_QUIT_BUTTON "resources/main-menu/quit_btn.png"
+#define CREDITS_MENU_BUTTON "resources/main-menu/menu_btn.png"
 
 #endif

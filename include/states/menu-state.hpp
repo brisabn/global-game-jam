@@ -25,6 +25,7 @@ private:
     sf::Sprite quit_button;
     sf::Sprite credits_button;
     sf::Text title;
+    sf::Sprite background;
     Audio *menu_music;
 
 public:

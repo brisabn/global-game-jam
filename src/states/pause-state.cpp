@@ -12,13 +12,15 @@ void PauseState::init()
 
 	// setup play button
 	assets->load_texture("resume_button", PAUSE_MENU_RESUME_BUTTON);
+	this->resume_button.setScale(0.35, 0.35);
 	this->resume_button.setTexture(assets->get_texture("resume_button"));
 	this->resume_button.setPosition((SCREEN_WIDTH / 2) - (this->resume_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->resume_button.getGlobalBounds().height);
 
 	// setup quit button
-	assets->load_texture("home_button", PAUSE_MENU_HOME_BUTTON);
+	assets->load_texture("home_button", CREDITS_MENU_BUTTON);
+	this->home_button.setScale(0.35, 0.35);
 	this->home_button.setTexture(assets->get_texture("home_button"));
-	this->home_button.setPosition((SCREEN_WIDTH / 2) - (this->home_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->home_button.getGlobalBounds().height * 2.2);
+	this->home_button.setPosition((SCREEN_WIDTH / 2) - (this->home_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->home_button.getGlobalBounds().height * (-1.2));
 }
 
 void PauseState::handle_input()
