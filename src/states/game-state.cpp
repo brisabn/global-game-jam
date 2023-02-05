@@ -12,8 +12,9 @@ void GameState::init()
     world = new b2World(b2Vec2(0, -9));
 
     // create player
-    player = new Player(world, 200, 180, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
+    player = new Player(world, 400, 1600, 23, 50, 45.f, 0.7f, sf::Color::Magenta);
     // player = new Player(world, 200, -624, 34, 44, 45.f, 0.7f, sf::Color::Magenta);
+    // 200 180
 
     // all boxes in this level
     init_boxes();
