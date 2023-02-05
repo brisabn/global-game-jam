@@ -43,6 +43,6 @@ namespace pte
     void Animation::reset()
     {
         current_sprite = 0;
-        float time_since_last_frame = 0.0f;
+        time_since_last_frame = 0.0f;
     }
 }
