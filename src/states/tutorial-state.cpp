@@ -29,7 +29,7 @@ void TutorialState::handle_input()
         else if (event.type == sf::Event::KeyPressed)
         {
             // std::cout << "aaa" << std::endl;
-            add_state<GameState>(true);
+            add_state<IntroState>(true);
         }
     }
 

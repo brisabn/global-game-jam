@@ -12,6 +12,7 @@
 #include "engine/include/generic-state.hpp"
 #include "states/menu-state.hpp"
 #include "states/game-state.hpp"
+#include "states/intro-state.hpp"
 #include "definitions.hpp"
 
 class TutorialState : public pte::GenericState
