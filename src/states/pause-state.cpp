@@ -2,19 +2,19 @@
 
 void PauseState::init()
 {
-	// setup title
-	assets->load_font("default_font", DEFAULT_FONT_PATH);
-	this->title.setFont(assets->get_font("default_font"));
-	this->title.setString("PAUSE MENU");
-	this->title.setCharacterSize(55);
-	this->title.setFillColor(sf::Color::White);
-	this->title.setPosition((SCREEN_WIDTH / 2) - (this->title.getGlobalBounds().width / 2), SCREEN_HEIGHT * 0.2);
-
 	// setup play button
 	assets->load_texture("resume_button", PAUSE_MENU_RESUME_BUTTON);
 	this->resume_button.setScale(0.35, 0.35);
 	this->resume_button.setTexture(assets->get_texture("resume_button"));
 	this->resume_button.setPosition((SCREEN_WIDTH / 2) - (this->resume_button.getGlobalBounds().width / 2), (SCREEN_HEIGHT / 2) + this->resume_button.getGlobalBounds().height);
+
+	// setup background
+	background_texture.loadFromFile("resources/pause_background.png");
+	background.setTexture(background_texture);
+	float scale_x = (float) SCREEN_WIDTH / background.getTexture()->getSize().x;
+    float scale_y = (float) SCREEN_HEIGHT / background.getTexture()->getSize().y;
+	background.setPosition(sf::Vector2f(0, 0));
+	background.setScale(sf::Vector2f(scale_x, scale_y));
 
 	// setup quit button
 	assets->load_texture("home_button", CREDITS_MENU_BUTTON);
@@ -59,7 +59,7 @@ void PauseState::draw(float delta_time)
 {
 	window->clear(sf::Color::Red);
 
-	window->draw(this->title);
+	window->draw(background);
 	window->draw(this->resume_button);
 	window->draw(this->home_button);
 

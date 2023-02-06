@@ -1,9 +1,9 @@
 /**
  * @file pause-state.hpp
  * @date 2023-01-06
- * 
+ *
  * @brief Example pause state
- * 
+ *
  */
 
 #ifndef PTE_PAUSE_STATE_HPP
@@ -16,9 +16,10 @@
 class PauseState : public pte::GenericState
 {
 private:
+    sf::Texture background_texture;
+    sf::Sprite background;
     sf::Sprite resume_button;
     sf::Sprite home_button;
-    sf::Text title;
 
 public:
     using GenericState::GenericState;

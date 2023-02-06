@@ -18,12 +18,20 @@ void IntroState::intro_sequence()
     this->text.setCharacterSize(SCREEN_WIDTH / 40);
     this->text.setFont(font);
     this->text.setOrigin(sf::Vector2f(0.f, 0.f));
-    this->text.setFillColor(sf::Color::Black);
-    this->text.setPosition(sf::Vector2f((SCREEN_WIDTH / 12.5), (SCREEN_HEIGHT / 1.2)));
+    this->text.setFillColor(sf::Color::White);
+    this->text.setPosition(sf::Vector2f((SCREEN_WIDTH / 12), (SCREEN_HEIGHT / 1.2)));
+
+    this->instruction.setCharacterSize(SCREEN_WIDTH / 30);
+    this->instruction.setFont(font);
+    this->instruction.setOrigin(sf::Vector2f(0.f, 0.f));
+    this->instruction.setFillColor(sf::Color::White);
+    this->instruction.setPosition(sf::Vector2f((SCREEN_WIDTH / 3.73), (SCREEN_HEIGHT / 2.5)));
+    this->instruction.setString("Press right key to advance");
 
     // Quadrinhos
-    Strip strip1, strip2, strip3, strip4, strip5, strip6, strip7;
-    assets->load_texture("background", "resources/intro/intro_background.jpg");
+    Strip strip1,
+        strip2, strip3, strip4, strip5, strip6, strip7;
+    assets->load_texture("background", "resources/intro/cutscene_background.png");
 
     assets->load_texture("quadro1", "resources/intro/quadro_1.png");
     assets->load_texture("quadro2", "resources/intro/quadro_2.png");
@@ -53,23 +61,23 @@ void IntroState::intro_sequence()
     intro_strips.push_back(strip3);
 
     strip4.quadro.setTexture(assets->get_texture("quadro4"));
-    strip4.quadro.setScale(1.35, 1.35);
-    strip4.quadro.setPosition(sf::Vector2f((SCREEN_WIDTH / 30), (SCREEN_HEIGHT / 300)));
+    strip4.quadro.setScale(1.6, 1.6);
+    strip4.quadro.setPosition(sf::Vector2f((SCREEN_WIDTH / 5), (SCREEN_HEIGHT / 33.2)));
     intro_strips.push_back(strip4);
 
     strip5.quadro.setTexture(assets->get_texture("quadro5"));
-    strip5.quadro.setScale(1.35, 1.35);
-    strip5.quadro.setPosition(sf::Vector2f((SCREEN_WIDTH / 300), (SCREEN_HEIGHT / 300)));
+    strip5.quadro.setScale(1.6, 1.6);
+    strip5.quadro.setPosition(sf::Vector2f((SCREEN_WIDTH / 5), (SCREEN_HEIGHT / 2.3)));
     intro_strips.push_back(strip5);
 
     strip6.quadro.setTexture(assets->get_texture("quadro6"));
-    strip6.quadro.setScale(1.35, 1.35);
-    strip6.quadro.setPosition(sf::Vector2f((SCREEN_WIDTH / 30), (SCREEN_HEIGHT / 2.5)));
+    strip6.quadro.setScale(1.6, 1.6);
+    strip6.quadro.setPosition(sf::Vector2f((SCREEN_WIDTH / 1.85), (SCREEN_HEIGHT / 35)));
     intro_strips.push_back(strip6);
 
     strip7.quadro.setTexture(assets->get_texture("quadro7"));
-    strip7.quadro.setScale(1.35, 1.35);
-    strip7.quadro.setPosition(sf::Vector2f((SCREEN_WIDTH / 300), (SCREEN_HEIGHT / 2.5)));
+    strip7.quadro.setScale(1.45, 1.45);
+    strip7.quadro.setPosition(sf::Vector2f((SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2.3)));
     intro_strips.push_back(strip7);
 }
 
@@ -147,26 +155,24 @@ void IntroState::handle_input()
         {
             if (event.key.code == sf::Keyboard::Right)
             {
-                if ((curr < intro_description.size() - 1) && (curr <= 3))
+                if ((curr < intro_description.size() - 1))
                 {
-                    std::cout << curr << std::endl;
                     set_string(intro_description[curr]);
                     intro_strips[curr].set_bool();
                     reset();
                     curr++;
                 }
-                if ((curr > 3) && (curr <= 6))
+                if (curr > 3)
                 {
                     intro_strips[0].show = false;
                     intro_strips[1].show = false;
                     intro_strips[2].show = false;
-
-                    set_string(intro_description[curr]);
-                    intro_strips[curr].set_bool();
-                    reset();
+                }
+                if (curr >= 7)
+                {
                     curr++;
                 }
-                if (curr > 6)
+                if (curr > 8)
                 {
                     add_state<GameState>(true);
                 }
@@ -221,6 +227,8 @@ void IntroState::draw(float delta_time)
     update_intro_sequence();
     write();
     window->draw(this->text);
+    if (curr == 0)
+        window->draw(this->instruction);
 
     window->display();
 }

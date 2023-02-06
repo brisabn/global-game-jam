@@ -18,6 +18,7 @@
 class TutorialState : public pte::GenericState
 {
 private:
+    sf::Texture background_texture;
     sf::Sprite background;
 
 public:
