@@ -3,8 +3,8 @@
 void TutorialState::init()
 {
     // setup background
-    assets->load_texture("tutorial", "resources/tutorial.png");
-    this->background.setTexture(assets->get_texture("tutorial"));
+    background_texture.loadFromFile("resources/tutorial.png");
+    background.setTexture(background_texture);
 
     // define scale using texture size
     float scale_x = (float) SCREEN_WIDTH / background.getTexture()->getSize().x;
