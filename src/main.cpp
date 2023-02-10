@@ -9,6 +9,9 @@
 
 int main()
 {
+
+    setenv("LD_LIBRARY_PATH", "$LD_LIBRARY_PATH:./lib", 1);
+    
     // First, create a new game. Before starting, set initial state
     pte::Game game = pte::Game(SCREEN_WIDTH, SCREEN_HEIGHT, "Demo");
     game.init_state<SplashState>();
