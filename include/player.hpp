@@ -10,6 +10,7 @@
 #define PLAYER_HPP
 
 #include <iostream>
+#include <cmath>
 #include "box2d/box2d.h"
 #include "game-objects.hpp"
 #include "engine/include/animation.hpp"

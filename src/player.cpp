@@ -395,7 +395,7 @@ void Player::render_hook(sf::RenderWindow &window)
         sprite.setOrigin(30, 30);
 
         // Set the rotation of the sprite
-        float angle = std::atan2(bottomPoint.y - topPoint.y, bottomPoint.x - topPoint.x) * 180.f / 3.14159265f;
+        float angle = atan2(bottomPoint.y - topPoint.y, bottomPoint.x - topPoint.x) * 180.f / 3.14159265f;
         sprite.setRotation(angle);
 
         // Set the scale of the sprite
@@ -403,7 +403,7 @@ void Player::render_hook(sf::RenderWindow &window)
         float height = hook_texture.getSize().y * 0.3;
         sprite.setScale(width / hook_texture.getSize().x, height / hook_texture.getSize().y);
 
-        float distance = std::sqrt((topPoint.x - bottomPoint.x) * (topPoint.x - bottomPoint.x) +
+        float distance = sqrt((topPoint.x - bottomPoint.x) * (topPoint.x - bottomPoint.x) +
                                    (topPoint.y - bottomPoint.y) * (topPoint.y - bottomPoint.y));
 
         sprite.setTextureRect(sf::IntRect(0, 0, distance * 3.33, 50));
