@@ -12,6 +12,7 @@
 #include <cmath>
 #include "engine/include/generic-state.hpp"
 #include "states/pause-state.hpp"
+#include "states/final-state.hpp"
 #include "definitions.hpp"
 #include "box2d/box2d.h"
 #include "audio.hpp"
