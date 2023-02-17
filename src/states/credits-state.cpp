@@ -46,7 +46,7 @@ void MainCreditsState::update(float delta_time)
 void MainCreditsState::draw(float delta_time)
 {
     window->clear(sf::Color::Blue);
-    
+
     window->draw(this->background);
 
     window->display();

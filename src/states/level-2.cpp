@@ -95,13 +95,13 @@ void Level2::handle_input()
         {
             // pause game
             music->music.pause();
-            
+
             music_on = false;
             add_state<PauseState>(false);
         }
     }
 
-    // player movement (jump have priority)
+    // player movement (jump has priority)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
     {
         player->action_jump();
@@ -161,7 +161,7 @@ void Level2::update(float delta_time)
     if (player->animations[player->action]->get_sprite()->getGlobalBounds().intersects(end_sprite.getGlobalBounds()))
     {
         delete music;
-        add_state<MainCreditsState>(true);
+        add_state<FinalState>(true);
     }
 
     view.setCenter(camera_x, camera_y);
