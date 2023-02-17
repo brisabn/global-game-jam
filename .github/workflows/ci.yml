@@ -43,7 +43,7 @@ jobs:
         path: | 
           build/yuca-game
           build/Release/yuca-game.exe
-          resources/*
+          resources/
         working-directory: build
         if-no-files-found: error
         
