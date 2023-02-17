@@ -12,6 +12,8 @@ jobs:
       matrix:
         platform:
         - { name: Linux GCC,      os: ubuntu-latest }
+        - { name: MacOS XCode,    os: macos-latest }
+        - { name: Windows VS2022, os: windows-2022 }
 
         config:
         - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
@@ -34,7 +36,7 @@ jobs:
 
     - name: Install
       shell: bash
-      run: cmake --install build --config Release && mv 
+      run: cmake --install build --config Release
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
@@ -42,8 +44,7 @@ jobs:
         name: yuca-game-${{ matrix.platform.os }}
         path: | 
           build/yuca-game
-          build/Release/yuca-game.exe
           resources/
-        working-directory: build
+          build/Release/yuca-game.exe
         if-no-files-found: error
         
