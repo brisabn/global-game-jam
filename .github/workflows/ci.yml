@@ -36,7 +36,7 @@ jobs:
 
     - name: Install
       shell: bash
-      run: cmake --install build --config Release && mv resources/ build/
+      run: cmake --install build --config Release && mv resources/ build/ && mv build/Release/* build/
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
@@ -44,7 +44,7 @@ jobs:
         name: yuca-game-${{ matrix.platform.os }}
         path: | 
           build/yuca-game
-          build/Release/yuca-game.exe
+          build/yuca-game.exe
           build/resources/
         if-no-files-found: error
         
