@@ -12,8 +12,6 @@ jobs:
       matrix:
         platform:
         - { name: Linux GCC,      os: ubuntu-latest }
-        - { name: MacOS XCode,    os: macos-latest }
-        - { name: Windows VS2022, os: windows-2022 }
 
         config:
         - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
@@ -44,7 +42,8 @@ jobs:
         name: yuca-game-${{ matrix.platform.os }}
         path: | 
           build/yuca-game
-          resources/
           build/Release/yuca-game.exe
+          resources/*
+        working-directory: build
         if-no-files-found: error
         
