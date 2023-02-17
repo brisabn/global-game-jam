@@ -44,6 +44,7 @@ jobs:
         name: yuca-game-${{ matrix.platform.os }}
         path: | 
           build/yuca-game
+          build/resources/
           build/Release/yuca-game.exe
         if-no-files-found: error
         
